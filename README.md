@@ -3,4 +3,5 @@
 - Cesar Coutino Gomez
 - Matt Hummer
 - Ruth Alejandra Bravo Perez
+- Belén Chaparro
 ## About
