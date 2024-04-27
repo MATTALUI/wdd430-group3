@@ -38,6 +38,7 @@ export default function SideNav({
       >
         {links.map((link) => (
           <Link
+            key={link.href}
             onClick={toggleSidenav}
             className="block font-bold px-4 py-2 hover:bg-red-950"
             href={link.href}
