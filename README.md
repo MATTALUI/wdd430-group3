@@ -4,4 +4,5 @@
 - Matt Hummer
 - Ruth Alejandra Bravo Perez
 - Belén Chaparro
+- Nathan Gartside
 ## About
