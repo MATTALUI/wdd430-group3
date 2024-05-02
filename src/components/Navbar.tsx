@@ -12,7 +12,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-red-800 p-4">
+      <nav className="bg-primary p-4">
         <button
           className="hover:bg-red-900 text-gray-100 p-2 rounded-sm border-red-900 transition-all"
           onClick={toggleSidenav}
