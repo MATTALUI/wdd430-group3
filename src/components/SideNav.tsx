@@ -12,17 +12,20 @@ export default function SideNav({
   open,
   toggleSidenav
 }: ISidenavProps) {
+  const isLoggedIn = false;
 
-  const stopProp = useCallback((e:React.MouseEvent) => {
+  const stopProp = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-  },[]);
+  }, []);
 
   const links = useMemo(() => [
     { text: "Products", href: "/products" },
     { text: "My Products", href: "/products?creator=myidwillgohereeventually" },
     { text: "My Profile", href: "/sellers/myidwillgohereeventually" },
-    { text: "Logout", href: "/" },
-  ], [])
+    isLoggedIn
+      ? { text: "Logout", href: "/" }
+      : { text: "Login", href: "/login" },
+  ], [isLoggedIn])
 
   return (
     <div
@@ -34,7 +37,7 @@ export default function SideNav({
     >
       <div
         onClick={stopProp}
-        className="bg-red-900 w-9/12 h-screen pt-12 text-gray-50"
+        className="bg-accent w-9/12 h-screen pt-12 text-gray-50"
       >
         {links.map((link) => (
           <Link
