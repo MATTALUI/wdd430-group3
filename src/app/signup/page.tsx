@@ -85,7 +85,7 @@ export default function SignupPage() {
           </div>
           <div className="flex items-center justify-between">
             <button className="bg-accent hover:opacity-75 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-              Create
+              Sign Up
             </button>
             <Link
               className="inline-block align-baseline font-bold text-sm text-secondary"
