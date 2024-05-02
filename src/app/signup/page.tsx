@@ -70,7 +70,7 @@ export default function SignupPage() {
                 value="buyer"
                 className="appearance-none border rounded-full w-4 h-4 border-gray-400 checked:bg-gray-500 checked:border-transparent focus:outline-none"
               />
-              <label htmlFor="buyer" className="ml-2" style={{ fontSize: '0.85rem' }}>Buyer (clients)</label>
+              <label htmlFor="buyer" className="ml-2 text-sm">Buyer (clients)</label>
             </div>
             <div>
               <input
@@ -80,7 +80,7 @@ export default function SignupPage() {
                 value="seller"
                 className="appearance-none border rounded-full w-4 h-4 border-gray-400 checked:bg-gray-500 checked:border-transparent focus:outline-none"
               />
-              <label htmlFor="seller" className="ml-2" style={{ fontSize: '0.85rem' }}>Seller (artisans & crafters)</label>
+              <label htmlFor="seller" className="ml-2 text-sm">Seller (artisans & crafters)</label>
             </div>
           </div>
           <div className="flex items-center justify-between">
