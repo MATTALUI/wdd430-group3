@@ -15,10 +15,10 @@ import { createKysely } from '@vercel/postgres-kysely';
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
 
-let db: Kysely<DataBase> | null = null;
-const useDB = () => {
-  if (!db) db = createKysely<DataBase>();
-  return db;
+let _db: Kysely<DataBase> | null = null;
+const db = () => {
+  if (!_db) _db = createKysely<DataBase>();
+  return _db;
 };
 
 const mapDbUserToUser = (dbUser: DBUser): User => ({
@@ -69,7 +69,7 @@ export const getDBUser = async (filter: UserFilter): Promise<DBUser> => {
   const filterEntries = Object.entries(filter);
   if (!filterEntries.length)
     throw new Error("getUser requires either 'email' or 'id' filter");
-  let query = useDB()
+  let query = db()
     .selectFrom(DBTableNames.Users)
     .selectAll();
   filterEntries.forEach(([key, value]) => {
@@ -96,7 +96,7 @@ export const getUserAuthentication = async (filter: UserFilter) => {
 
 export const getProducts = async (): Promise<Product[]> => {
   await new Promise(res => setTimeout(res, 3000));
-  const productsQuery = useDB().selectFrom(DBTableNames.Products).selectAll();
+  const productsQuery = db().selectFrom(DBTableNames.Products).selectAll();
   const productsResults = await productsQuery.execute();
   const products = productsResults.map(mapDbProductToProduct);
   const productIds = Array.from(products.reduce((ids, product) => {
@@ -108,11 +108,11 @@ export const getProducts = async (): Promise<Product[]> => {
     imageResults,
     reviewResults,
   ] = await Promise.all([
-    useDB().selectFrom(DBTableNames.ProductImages)
+    db().selectFrom(DBTableNames.ProductImages)
       .selectAll()
       .where('product_id', 'in', productIds)
       .execute(),
-    useDB().selectFrom(DBTableNames.Reviews)
+    db().selectFrom(DBTableNames.Reviews)
       .selectAll()
       .where('product_id', 'in', productIds)
       .execute(),
