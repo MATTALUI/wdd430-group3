@@ -10,8 +10,16 @@ import {
   type Review,
   DBReview,
 } from "@/types";
+import type { Kysely } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
-const db = createKysely<DataBase>();
+
+type UserFilter = Partial<Pick<User, "id" | "email">>;
+
+let db: Kysely<DataBase> | null = null;
+const useDB = () => {
+  if (!db) db = createKysely<DataBase>();
+  return db;
+};
 
 const mapDbUserToUser = (dbUser: DBUser): User => ({
   id: dbUser.id.toString(),
@@ -57,20 +65,38 @@ const mapDbReviewToReview = (
   updatedAt: dbReview.updated_at as Date,
 });
 
-export const getUser = async (userId: User["id"]): Promise<User> => {
-  await new Promise(res => setTimeout(res, 3000));
-  const dbUser = await db
+export const getDBUser = async (filter: UserFilter): Promise<DBUser> => {
+  const filterEntries = Object.entries(filter);
+  if (!filterEntries.length)
+    throw new Error("getUser requires either 'email' or 'id' filter");
+  let query = useDB()
     .selectFrom(DBTableNames.Users)
-    .selectAll()
-    .where('id', '=', userId)
-    .executeTakeFirstOrThrow();
+    .selectAll();
+  filterEntries.forEach(([key, value]) => {
+    query = query.where(key as keyof DBUser, '=', value);
+  });
+  const dbUser = await query.executeTakeFirstOrThrow();
+
+  return dbUser;
+}
+
+export const getUser = async (filter: UserFilter): Promise<User> => {
+  const dbUser = await getDBUser(filter);
 
   return mapDbUserToUser(dbUser);
 }
 
+export const getUserAuthentication = async (filter: UserFilter) => {
+  const dbUser = await getDBUser(filter);
+  const user = mapDbUserToUser(dbUser);
+  const { password_hash: passwordHash } = dbUser;
+
+  return { user, passwordHash };
+}
+
 export const getProducts = async (): Promise<Product[]> => {
   await new Promise(res => setTimeout(res, 3000));
-  const productsQuery = db.selectFrom(DBTableNames.Products).selectAll();
+  const productsQuery = useDB().selectFrom(DBTableNames.Products).selectAll();
   const productsResults = await productsQuery.execute();
   const products = productsResults.map(mapDbProductToProduct);
   const productIds = Array.from(products.reduce((ids, product) => {
@@ -82,11 +108,11 @@ export const getProducts = async (): Promise<Product[]> => {
     imageResults,
     reviewResults,
   ] = await Promise.all([
-    db.selectFrom(DBTableNames.ProductImages)
+    useDB().selectFrom(DBTableNames.ProductImages)
       .selectAll()
       .where('product_id', 'in', productIds)
       .execute(),
-    db.selectFrom(DBTableNames.Reviews)
+    useDB().selectFrom(DBTableNames.Reviews)
       .selectAll()
       .where('product_id', 'in', productIds)
       .execute(),
