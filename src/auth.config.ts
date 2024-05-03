@@ -10,7 +10,6 @@ export const authConfig = {
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      console.log("user", auth?.user || "null");
       const isLoggedIn = !!auth?.user;
       const isInProtectedPath =
         protectedPatterns.some((pattern) => pattern.test(nextUrl.pathname));
@@ -19,11 +18,19 @@ export const authConfig = {
       if (isInProtectedPath) return isLoggedIn;
       return true;
     },
-    // session(session) {
-    //   console.log(session)
-    //   return {}
-    // },
-    
+    jwt({ token, user }) {
+      Object.assign(token, user);
+      return token
+    },
+    session: async ({ session, token }) => {
+      if (session?.user && token.sub) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+  },
+  session: {
+    strategy: 'jwt',
   },
   providers: [], // providers get set in ./auth.ts
 } satisfies NextAuthConfig;

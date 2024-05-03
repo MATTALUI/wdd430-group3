@@ -16,25 +16,27 @@ export default function SideNav({
   open,
   toggleSidenav
 }: ISidenavProps) {
-  const { status } = useSession();
+  const { status, data } = useSession();
   const isLoggedIn = status === "authenticated";
+  const user = data?.user;
 
   const stopProp = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
   }, []);
 
   const logout = useCallback(async () => {
+    toggleSidenav();
     await signOut();
   }, []);
 
   const links = useMemo(() =>
     [
       { text: "Products", href: "/products" },
-      { text: "My Products", href: "/products?creator=myidwillgohereeventually" },
-      { text: "My Profile", href: "/sellers/myidwillgohereeventually" },
+      user?.id && { text: "My Products", href: `/products?creator=${user.id}` },
+      user?.id && { text: "My Profile", href: `/sellers/${user.id}` },
       !isLoggedIn && { text: "Login", href: "/login" },
     ].filter(l => !!l) as NavLink[],
-    [isLoggedIn]
+    [isLoggedIn, user?.id]
   );
 
   return (
