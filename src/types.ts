@@ -88,3 +88,17 @@ export type DataBase = {
   [DBTableNames.ProductImages]: DBProductImage;
   [DBTableNames.Reviews]: DBReview;
 };
+
+export enum SortOrders {
+  Ascending = "asc",
+  Descending = "desc",
+}
+
+export interface IQueryBuilder<T> {
+  filter?: Partial<T>;
+  sort?: Partial<{
+    key: keyof T;
+    order: SortOrders;
+    limit: number;
+  }>;
+}
