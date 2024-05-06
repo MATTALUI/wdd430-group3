@@ -15,16 +15,17 @@ export default async function ProductList({
       {!products.length && (
         <div className="bg-sky-100 border border-sky-400 text-sky-700 px-4 py-3 rounded relative" role="alert">
           <strong className="font-bold">No Products</strong>
-          <span className="block sm:inline">Don't see what you're looking for? Try browsing <Link href="/products" className="font-bold underline">all products</Link> instead!</span>
+          <span className="block sm:inline">{`Don't`} see what {`you're`} looking for? Try browsing <Link href="/products" className="font-bold underline">all products</Link> instead!</span>
         </div>
       )}
       {products.map((product) => (
         <Link
+          key={product.id}
           href={`/products/${product.id}`}
           className="my-2 flex p-2 bg-gray-50 rounded-md hover:opacity-75 shadow"
         >
           <div className="flex-2">
-            <img src={product.images[0]?.src} />
+            <img src={product.images[0]?.src} alt="user profile image"/>
           </div>
           <div className="flex-4 ps-2">
             <div className="flex">

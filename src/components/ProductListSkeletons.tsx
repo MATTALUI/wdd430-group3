@@ -7,8 +7,11 @@ export default function ProductListSkeletons({
 
   return (
     <div>
-      {new Array(count).fill(null).map(() => (
-        <div className="animate-pulse shadow rounded-md my-2 flex p-2 bg-gray-50 opacity-25">
+      {new Array(count).fill(null).map((_,i) => (
+        <div
+          key={i}
+          className="animate-pulse shadow rounded-md my-2 flex p-2 bg-gray-50 opacity-25"
+        >
           <div className="flex flex-1">
             <div className="flex-2">
               <div className="w-full bg-gray-300 aspect-square" />
