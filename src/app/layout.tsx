@@ -4,6 +4,7 @@ import clsx from "clsx";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -14,8 +15,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
+  <SessionProvider>
     <html lang="en">
       <body
         className={clsx(nunito.className, "flex min-h-screen flex-col bg-light-trans")}
@@ -27,5 +28,6 @@ export default function RootLayout({
         <Footer />
       </body>
     </html>
+    </SessionProvider>
   );
 }
