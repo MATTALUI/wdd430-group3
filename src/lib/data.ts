@@ -8,7 +8,9 @@ import {
   type User,
   DBTableNames,
   type Review,
-  DBReview,
+  type DBReview,
+  type IQueryBuilder,
+  SortOrders,
 } from "@/types";
 import type { Kysely } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
@@ -94,11 +96,31 @@ export const getUserAuthentication = async (filter: UserFilter) => {
   return { user, passwordHash };
 }
 
-export const getProducts = async (): Promise<Product[]> => {
+export const getProducts = async ({
+  filter: filterOverrides,
+  sort: sortOverrides,
+}: IQueryBuilder<DBProduct> = {}): Promise<Product[]> => {
+  const filter = {
+    ...filterOverrides,
+  };
+  const sort = {
+    key: "created_at" as const,
+    order: SortOrders.Descending,
+    limit: 25,
+    ...sortOverrides,
+  };
   await new Promise(res => setTimeout(res, 3000));
-  const productsQuery = db().selectFrom(DBTableNames.Products).selectAll();
+  let productsQuery = db()
+    .selectFrom(DBTableNames.Products)
+    .selectAll()
+    .orderBy(sort.key, sort.order)
+    .limit(sort.limit);
+  Object.entries(filter).forEach(([key, value]) => {
+    productsQuery = productsQuery.where(key as keyof DBProduct, '=', value as any);
+  });
   const productsResults = await productsQuery.execute();
   const products = productsResults.map(mapDbProductToProduct);
+  if (!products.length) return products;
   const productIds = Array.from(products.reduce((ids, product) => {
     ids.add(product.id);
     return ids;

@@ -27,7 +27,7 @@ export default function SideNav({
   const logout = useCallback(async () => {
     toggleSidenav();
     await signOut();
-  }, []);
+  }, [toggleSidenav]);
 
   const links = useMemo(() =>
     [

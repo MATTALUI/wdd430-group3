@@ -33,24 +33,27 @@ const seedUsers = async (client) => {
       firstName: "Matt",
       lastName: "Hummer",
       email: "matt@example.com",
+      image: "https://picsum.photos/300/300",
     },
     {
       firstName: "Jan",
       lastName: "Levinson",
       email: "jan@example.com",
+      image: "https://picsum.photos/300/300",
     },
     {
       firstName: "Michael",
       lastName: "Scott",
       email: "michael@example.com",
+      image: "https://picsum.photos/300/300",
     },
   ];
 
   const createdUsers = await Promise.all(users.map(async (user) => {
     const hashedPassword = await bcrypt.hash("password", 10);
     const result = await client.sql`
-        INSERT INTO group3_users (first_name, last_name, email, password_hash)
-        VALUES (${user.firstName}, ${user.lastName}, ${user.email}, ${hashedPassword})
+        INSERT INTO group3_users (first_name, last_name, email, password_hash, profile_image)
+        VALUES (${user.firstName}, ${user.lastName}, ${user.email}, ${hashedPassword}, ${user.image})
         RETURNING *;
       `;
     const [insertedUser] = result.rows;
