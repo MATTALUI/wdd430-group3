@@ -1,5 +1,6 @@
 import ProductList from "@/components/ProductList";
 import ProductListSkeletons from "@/components/ProductListSkeletons";
+import ProductsSearch from "@/components/ProductsSearch";
 import { DBProduct } from "@/types";
 import { pick } from "lodash";
 import { Suspense } from "react";
@@ -21,7 +22,7 @@ export default async function ProductsPage({
 
   return (
     <div>
-      <div></div>
+      <ProductsSearch />
       <div>
         <Suspense fallback={<ProductListSkeletons />}>
           <ProductList filter={filter} sort={sort} />
