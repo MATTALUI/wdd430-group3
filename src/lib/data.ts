@@ -14,6 +14,7 @@ import {
 } from "@/types";
 import type { Kysely } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
+import { pick } from "lodash";
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
 
@@ -40,7 +41,12 @@ const mapDbProductToProduct = (dbProduct: DBProduct): Product => ({
   description: dbProduct.description,
   images: [],
   reviews: [],
-  sellerId: dbProduct.seller_id,
+  seller: {
+    id: dbProduct.seller_id,
+    firstName: "User",
+    lastName: "Unavailable",
+    email: ":(",
+  },
   createdAt: dbProduct.created_at as Date,
   updatedAt: dbProduct.updated_at as Date,
 });
@@ -119,6 +125,10 @@ export const getProducts = async ({
     productsQuery = productsQuery.where(key as keyof DBProduct, '=', value as any);
   });
   const productsResults = await productsQuery.execute();
+  const sellerIds = Array.from(productsResults.reduce((ids, product) => {
+    ids.add(product.seller_id);
+    return ids;
+  }, new Set<User["id"]>()));
   const products = productsResults.map(mapDbProductToProduct);
   if (!products.length) return products;
   const productIds = Array.from(products.reduce((ids, product) => {
@@ -129,6 +139,7 @@ export const getProducts = async ({
   const [
     imageResults,
     reviewResults,
+    sellerResults,
   ] = await Promise.all([
     db().selectFrom(DBTableNames.ProductImages)
       .selectAll()
@@ -137,6 +148,11 @@ export const getProducts = async ({
     db().selectFrom(DBTableNames.Reviews)
       .selectAll()
       .where('product_id', 'in', productIds)
+      .execute(),
+    // This could probably just be a join.
+    db().selectFrom(DBTableNames.Users)
+      .selectAll()
+      .where('id', 'in', sellerIds)
       .execute(),
   ]);
   const imageMap = imageResults
@@ -153,9 +169,21 @@ export const getProducts = async ({
       map[review.productId].push(review);
       return map;
     }, {});
+  const sellerMap = sellerResults
+    .map(mapDbUserToUser)
+    .reduce((map: Record<string, User>, seller: User) => {
+      if (!Object.hasOwn(map, seller.id)) map[seller.id] = seller;
+      return map;
+    }, {});
   products.forEach((product) => {
     product.images = imageMap[product.id] || [];
     product.reviews = reviewMap[product.id] || [];
+    product.seller = pick(sellerMap[product.seller.id], [
+      "id",
+      "firstName",
+      "lastName",
+      "email",
+    ])
   });
 
   return products;
