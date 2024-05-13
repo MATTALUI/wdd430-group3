@@ -1,10 +1,33 @@
-import { getProducts } from "@/lib/data";
+import ProductList from "@/components/ProductList";
+import ProductListSkeletons from "@/components/ProductListSkeletons";
+import ProductsSearch from "@/components/ProductsSearch";
+import { DBProduct } from "@/types";
+import { pick } from "lodash";
+import { Suspense } from "react";
 
-export default async function ProductsPage() {
-  const products = await getProducts();
+const filterParams = [
+  'seller_id',
+];
+interface IProductsPageProps {
+  searchParams?: Partial<{
+    seller_id: string;
+  }>;
+}
+
+export default async function ProductsPage({
+  searchParams = {},
+}:IProductsPageProps) {
+  const filter: Partial<DBProduct> = pick(searchParams, filterParams);
+  const sort = {};
+
   return (
     <div>
-      {products.length} products available
+      <ProductsSearch />
+      <div>
+        <Suspense fallback={<ProductListSkeletons />}>
+          <ProductList filter={filter} sort={sort} />
+        </Suspense>
+      </div>
     </div>
   );
 }

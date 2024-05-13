@@ -25,7 +25,7 @@ export default async function ProductList({
           className="my-2 flex p-2 bg-gray-50 rounded-md hover:opacity-75 shadow"
         >
           <div className="flex-2">
-            <img src={product.images[0]?.src} alt="user profile image"/>
+            <img src={product.images[0]?.src} alt="product image"/>
           </div>
           <div className="flex-4 ps-2">
             <div className="flex">
