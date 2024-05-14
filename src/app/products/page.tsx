@@ -7,10 +7,12 @@ import { Suspense } from "react";
 
 const filterParams = [
   'seller_id',
+  'search'
 ];
 interface IProductsPageProps {
   searchParams?: Partial<{
     seller_id: string;
+    search: string;
   }>;
 }
 
