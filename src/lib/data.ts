@@ -12,9 +12,9 @@ import {
   type IQueryBuilder,
   SortOrders,
 } from "@/types";
-import type { Kysely } from "kysely";
-import { createKysely } from '@vercel/postgres-kysely';
-import { pick } from "lodash";
+import { type Kysely, sql } from "kysely";
+import { createKysely} from '@vercel/postgres-kysely';
+import { omit, pick } from "lodash";
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
 
@@ -121,7 +121,9 @@ export const getProducts = async ({
     .selectAll()
     .orderBy(sort.key, sort.order)
     .limit(sort.limit);
-  Object.entries(filter).forEach(([key, value]) => {
+  if (filter.search)
+    productsQuery = productsQuery.where(sql`LOWER(name)`, sql`LIKE`, `%${filter.search}%`)
+  Object.entries(omit(filter, "search")).forEach(([key, value]) => {
     productsQuery = productsQuery.where(key as keyof DBProduct, '=', value as any);
   });
   const productsResults = await productsQuery.execute();

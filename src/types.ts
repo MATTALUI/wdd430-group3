@@ -95,7 +95,9 @@ export enum SortOrders {
 }
 
 export interface IQueryBuilder<T> {
-  filter?: Partial<T>;
+  filter?: Partial<T & {
+    search: string;
+  }>;
   sort?: Partial<{
     key: keyof T;
     order: SortOrders;
