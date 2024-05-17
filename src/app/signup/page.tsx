@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import { addUser } from "@/lib/actions";
-
+import { useRouter } from 'next/router';
 
 const useClient = () => {};
 
+
 export default function SignupPage() {
-  useClient(); 
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   // State variables to store input field values
   const [firstName, setFirstName] = useState("");
@@ -47,13 +48,6 @@ export default function SignupPage() {
       return;
     }
 
-    // Log the data entered by the user
-    // console.log("First Name:", firstName);
-    // console.log("Last Name:", lastName);
-    // console.log("Email:", email);
-    // console.log("Password:", password);
-    // console.log("Repeat Password:", repeatPassword);
-
     // Password validation
     if (password !== repeatPassword) {
       setError('Passwords do not match!');
@@ -66,7 +60,7 @@ export default function SignupPage() {
     formData.append("lastName", lastName);
     formData.append("email", email);
     formData.append("password", password);
-
+    
     // Call the addUser function
     addUser(undefined, formData)
       .then((response) => {
@@ -75,10 +69,14 @@ export default function SignupPage() {
           setError('Email is already registered!');
         } else {
           console.log("User created successfully:", response.message);
+          setSuccessMessage('User created successfully');
+
+          // Redirect to the login page
         }
       })
       .catch((error) => {
         console.error("Error creating user:", error);
+        setError('Failed to create user. Please try again later.');
     });
   };
 
@@ -162,6 +160,7 @@ export default function SignupPage() {
             />
           </div>
           {error && <div style={{ color: 'red' }}>{error}</div>}
+          <div style={{ color: 'green' }}>{successMessage}</div>
           <div className="flex items-center justify-between">
             <button 
               className="bg-accent hover:opacity-75 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
