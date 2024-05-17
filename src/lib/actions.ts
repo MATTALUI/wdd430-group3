@@ -51,9 +51,15 @@ export async function createUser(userData: UserData) {
     };
 
     return { message: 'User created successfully', user };
-  } catch (error) {
-    console.error('Error creating user:', error);
-    throw new Error('Failed to create user');
+  } catch (error: any) {
+    if (error.code === '23505') {
+      // Duplicate key violation error
+      console.error('Error creating user:', error.message);
+      return { message: 'Email is already registered', error: error.detail };
+    } else {
+      console.error('Error creating user:', error);
+      throw new Error('Failed to create user');
+    }
   }
 }
 

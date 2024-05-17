@@ -67,11 +67,18 @@ export default function SignupPage() {
     formData.append("email", email);
     formData.append("password", password);
 
-    // Call the addUser function (imported from actions) to handle user creation
-    addUser(undefined, formData).then((response) => {
-      console.log("User created successfully:", response);
-    }).catch((error) => {
-      console.error("Error creating user:", error);
+    // Call the addUser function
+    addUser(undefined, formData)
+      .then((response) => {
+        if (response.error) {
+          console.error("Error creating user:", response.error);
+          setError('Email is already registered!');
+        } else {
+          console.log("User created successfully:", response.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating user:", error);
     });
   };
 
