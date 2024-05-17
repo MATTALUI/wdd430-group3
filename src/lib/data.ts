@@ -6,6 +6,8 @@ import {
   type Product,
   type ProductImage,
   type User,
+  type UserData,      
+  type DBUserInsert,  
   DBTableNames,
   type Review,
   type DBReview,
@@ -14,14 +16,16 @@ import {
 } from "@/types";
 import type { Kysely } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
+import bcrypt from 'bcrypt'; 
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
 
-let _db: Kysely<DataBase> | null = null;
-const db = () => {
+export let _db: Kysely<DataBase> | null = null;
+export const db = () => {
   if (!_db) _db = createKysely<DataBase>();
   return _db;
 };
+
 
 const mapDbUserToUser = (dbUser: DBUser): User => ({
   id: dbUser.id.toString(),
@@ -95,6 +99,36 @@ export const getUserAuthentication = async (filter: UserFilter) => {
 
   return { user, passwordHash };
 }
+
+// Function to create a user in the database
+export const createUser = async (userData: UserData) => {
+  try {
+    // Hash the password
+    const passwordHash = await bcrypt.hash(userData.password, 10);
+
+    // Prepare the DBUserInsert object
+    const dbUser: DBUserInsert = {
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+      email: userData.email,
+      password_hash: passwordHash,
+      description: null, // Default to null
+      profile_image: null, // Default to null
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    // Insert the new user into the database
+    await db().insertInto(DBTableNames.Users).values(dbUser).execute();
+
+    // Fetch and return the created user
+    const createdUser = await getDBUser({ email: userData.email });
+    return mapDbUserToUser(createdUser);
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw new Error('Failed to create user');
+  }
+};
 
 export const getProducts = async ({
   filter: filterOverrides,
