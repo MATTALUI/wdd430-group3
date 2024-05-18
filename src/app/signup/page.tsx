@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { addUser } from "@/lib/actions";
 import { z } from 'zod';
 //import { useRouter } from 'next/router';
@@ -30,7 +30,7 @@ export default function SignupPage() {
     path: ["repeatPassword"], 
   });
 
-  const handleSignUp = () => {
+  const handleSignUp = useCallback(() => {
     // Prepare form data
     const formData = {
       firstName,
@@ -75,7 +75,7 @@ export default function SignupPage() {
         setError('Failed to create user. Please try again later.');
       }
     }
-  };
+  }, [firstName, lastName, email, password, repeatPassword, formDataSchema]);
 
   return (
     <div>
