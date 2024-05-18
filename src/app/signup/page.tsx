@@ -30,7 +30,7 @@ export default function SignupPage() {
     path: ["repeatPassword"], 
   });
 
-  const handleSignUp = useCallback(() => {
+  const handleSignUp = useCallback(async () => {
     // Prepare form data
     const formData = {
       firstName,
@@ -45,21 +45,15 @@ export default function SignupPage() {
       formDataSchema.parse(formData);
     
       // Call the addUser function
-      addUser(undefined, formData)
-        .then((response) => {
-          if (response.error) {
-            console.error("Error creating user:", response.error);
-            setError('Email is already registered!');
-          } else {
-            console.log("User created successfully:", response.message);
-            setSuccessMessage('User created successfully');
-            //setTimeout(() => router.push('/login'), 2000);
-          }
-        })
-        .catch((error) => {
-          console.error("Error creating user:", error);
-          setError('Failed to create user. Please try again later.');
-      });
+      const response = await addUser(undefined, formData);
+        if (response.error) {
+          console.error("Error creating user:", response.error);
+          setError('Email is already registered!');
+        } else {
+          console.log("User created successfully:", response.message);
+          setSuccessMessage('User created successfully');
+          //setTimeout(() => router.push('/login'), 2000);
+        }
     } catch (error) {
       if (error instanceof z.ZodError) {
         setError(error.errors.map(err => err.message).join(" "));
