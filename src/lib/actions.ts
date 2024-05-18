@@ -65,16 +65,9 @@ export async function createUser(userData: UserData) {
 
 export async function addUser(
   prevState: string | undefined,
-  formData: FormData,
+  userData: UserData,
 ) {
   try {
-    const userData: UserData = {
-      firstName: formData.get('firstName') as string,
-      lastName: formData.get('lastName') as string,
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
-    };
-
     const data = await createUser(userData);
     return data;
   } catch (error) {

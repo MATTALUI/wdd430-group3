@@ -20,11 +20,11 @@ export default function SignupPage() {
 
   // Define a Zod schema for the form data
   const formDataSchema = z.object({
-    firstName: z.string().trim().min(3, { message: "Must be 3 or more characters long" }),
-    lastName: z.string().trim().min(3, { message: "Must be 3 or more characters long" }),
+    firstName: z.string().trim().min(3, { message: "First name must be 3 or more characters long" }),
+    lastName: z.string().trim().min(3, { message: "Last name must be 3 or more characters long" }),
     email: z.string().email({ message: "Invalid email format" }),
-    password: z.string().trim().min(8, { message: "Must be 8 or more characters long" }),
-    repeatPassword: z.string().trim().min(8, { message: "Must be 8 or more characters long" }),
+    password: z.string().trim().min(8, { message: "Password must be 8 or more characters long" }),
+    repeatPassword: z.string().trim().min(8, { message: "Repeat password must be 8 or more characters long" }),
   }).refine((data) => data.password === data.repeatPassword, {
     message: "Passwords do not match!",
     path: ["repeatPassword"], 
@@ -43,16 +43,9 @@ export default function SignupPage() {
     // Validate the form data using the Zod schema
     try {
       formDataSchema.parse(formData);
-      // Proceed with form submission
-      const formDataForAPI = new FormData();
-      formDataForAPI.append("firstName", firstName);
-      formDataForAPI.append("lastName", lastName);
-      formDataForAPI.append("email", email);
-      formDataForAPI.append("password", password);
-      //const router = useRouter();
     
       // Call the addUser function
-      addUser(undefined, formDataForAPI)
+      addUser(undefined, formData)
         .then((response) => {
           if (response.error) {
             console.error("Error creating user:", response.error);
