@@ -101,34 +101,34 @@ export const getUserAuthentication = async (filter: UserFilter) => {
 }
 
 // Function to create a user in the database
-export const createUser = async (userData: UserData) => {
-  try {
-    // Hash the password
-    const passwordHash = await bcrypt.hash(userData.password, 10);
+// export const createUser = async (userData: UserData) => {
+//   try {
+//     // Hash the password
+//     const passwordHash = await bcrypt.hash(userData.password, 10);
 
-    // Prepare the DBUserInsert object
-    const dbUser: DBUserInsert = {
-      first_name: userData.firstName,
-      last_name: userData.lastName,
-      email: userData.email,
-      password_hash: passwordHash,
-      description: null, // Default to null
-      profile_image: null, // Default to null
-      created_at: new Date(),
-      updated_at: new Date(),
-    };
+//     // Prepare the DBUserInsert object
+//     const dbUser: DBUserInsert = {
+//       first_name: userData.firstName,
+//       last_name: userData.lastName,
+//       email: userData.email,
+//       password_hash: passwordHash,
+//       description: null, // Default to null
+//       profile_image: null, // Default to null
+//       created_at: new Date(),
+//       updated_at: new Date(),
+//     };
 
-    // Insert the new user into the database
-    await db().insertInto(DBTableNames.Users).values(dbUser).execute();
+//     // Insert the new user into the database
+//     await db().insertInto(DBTableNames.Users).values(dbUser).execute();
 
-    // Fetch and return the created user
-    const createdUser = await getDBUser({ email: userData.email });
-    return mapDbUserToUser(createdUser);
-  } catch (error) {
-    console.error('Error creating user:', error);
-    throw new Error('Failed to create user');
-  }
-};
+//     // Fetch and return the created user
+//     const createdUser = await getDBUser({ email: userData.email });
+//     return mapDbUserToUser(createdUser);
+//   } catch (error) {
+//     console.error('Error creating user:', error);
+//     throw new Error('Failed to create user');
+//   }
+// };
 
 export const getProducts = async ({
   filter: filterOverrides,
