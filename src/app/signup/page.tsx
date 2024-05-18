@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { addUser } from "@/lib/actions";
-import { useRouter } from 'next/router';
-
-const useClient = () => {};
-
+import { z } from 'zod';
+//import { useRouter } from 'next/router';
 
 export default function SignupPage() {
+  
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -19,65 +18,63 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
 
-  const isValidEmail = (email: string) => {
-    // Regular expression to validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  // Define a Zod schema for the form data
+  const formDataSchema = z.object({
+    firstName: z.string().trim().min(3, { message: "Must be 3 or more characters long" }),
+    lastName: z.string().trim().min(3, { message: "Must be 3 or more characters long" }),
+    email: z.string().email({ message: "Invalid email format" }),
+    password: z.string().trim().min(8, { message: "Must be 8 or more characters long" }),
+    repeatPassword: z.string().trim().min(8, { message: "Must be 8 or more characters long" }),
+  }).refine((data) => data.password === data.repeatPassword, {
+    message: "Passwords do not match!",
+    path: ["repeatPassword"], 
+  });
 
-  // Event handler for the "Sign Up" button click
   const handleSignUp = () => {
-    // Check if the first name is empty
-    if (!firstName.trim()) {
-      setError('First Name cannot be empty!');
-      return;
-    }
-
-    if (!email.trim()) {
-      setError('Email cannot be empty!');
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      setError('Invalid email format');
-      return;
-    }
-
-    if (!password.trim()) {
-      setError('Password cannot be empty!');
-      return;
-    }
-
-    // Password validation
-    if (password !== repeatPassword) {
-      setError('Passwords do not match!');
-      return;
-    }
-
     // Prepare form data
-    const formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    formData.append("email", email);
-    formData.append("password", password);
-    
-    // Call the addUser function
-    addUser(undefined, formData)
-      .then((response) => {
-        if (response.error) {
-          console.error("Error creating user:", response.error);
-          setError('Email is already registered!');
-        } else {
-          console.log("User created successfully:", response.message);
-          setSuccessMessage('User created successfully');
+    const formData = {
+      firstName,
+      lastName,
+      email,
+      password,
+      repeatPassword,
+    };
 
-          // Redirect to the login page
-        }
-      })
-      .catch((error) => {
-        console.error("Error creating user:", error);
+    // Validate the form data using the Zod schema
+    try {
+      formDataSchema.parse(formData);
+      // Proceed with form submission
+      const formDataForAPI = new FormData();
+      formDataForAPI.append("firstName", firstName);
+      formDataForAPI.append("lastName", lastName);
+      formDataForAPI.append("email", email);
+      formDataForAPI.append("password", password);
+      //const router = useRouter();
+    
+      // Call the addUser function
+      addUser(undefined, formDataForAPI)
+        .then((response) => {
+          if (response.error) {
+            console.error("Error creating user:", response.error);
+            setError('Email is already registered!');
+          } else {
+            console.log("User created successfully:", response.message);
+            setSuccessMessage('User created successfully');
+            //setTimeout(() => router.push('/login'), 2000);
+          }
+        })
+        .catch((error) => {
+          console.error("Error creating user:", error);
+          setError('Failed to create user. Please try again later.');
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setError(error.errors.map(err => err.message).join(" "));
+      } else {
+        console.error("Unexpected error:", error);
         setError('Failed to create user. Please try again later.');
-    });
+      }
+    }
   };
 
   return (
