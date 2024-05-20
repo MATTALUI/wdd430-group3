@@ -13,7 +13,7 @@ import {
   SortOrders,
 } from "@/types";
 import { type Kysely, sql } from "kysely";
-import { createKysely} from '@vercel/postgres-kysely';
+import { createKysely } from '@vercel/postgres-kysely';
 import { omit, pick } from "lodash";
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
@@ -189,4 +189,10 @@ export const getProducts = async ({
   });
 
   return products;
+}
+
+export const getProduct = async (id: DBProduct["id"]): Promise<Product> => {
+  const products = await getProducts({ filter: { id } });
+  if (!products.length) throw new Error(`Product not found for id: ${id}`);
+  return products[0];
 }

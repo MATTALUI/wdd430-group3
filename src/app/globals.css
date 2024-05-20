@@ -10,6 +10,10 @@
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
 :root {
   --primary: #8C3C3D;
   --secondary: #87465D;
