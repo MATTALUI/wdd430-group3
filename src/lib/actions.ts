@@ -2,9 +2,9 @@
 
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import bcrypt from 'bcrypt';
 import { createUser } from '@/lib/data';
-import { DBTableNames, UserData } from '@/types';
+import { mapFormDataToDBUser } from '@/lib/data';
+
  
 export async function authenticate(
   prevState: string | undefined,
@@ -25,15 +25,13 @@ export async function authenticate(
   }
 }
 
-export async function addUser(
-  prevState: string | undefined,
-  userData: UserData,
-) {
+export async function processFormData (formData: any)  {
   try {
-    const data = await createUser(userData);
+    const dbUser = await mapFormDataToDBUser(formData);
+    const data = await createUser(dbUser);
     return data;
   } catch (error) {
-    console.error('Error creating user:', error);
-    throw new Error('Failed to create user');
+    console.error('Error processing form data:', error);
+    throw new Error('Failed to process form data');
   }
-}
+};

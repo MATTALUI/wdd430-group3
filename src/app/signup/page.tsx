@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useCallback } from "react";
-import { addUser } from "@/lib/actions";
+import { processFormData } from "@/lib/actions";
 import { z } from 'zod';
 //import { useRouter } from 'next/router';
 
@@ -10,6 +10,7 @@ export default function SignupPage() {
   
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  //const router = useRouter();
 
   // State variables to store input field values
   const [firstName, setFirstName] = useState("");
@@ -39,21 +40,23 @@ export default function SignupPage() {
       password,
       repeatPassword,
     };
-
+    //const router = useRouter();
+    //console.log(router.pathname);
     // Validate the form data using the Zod schema
     try {
       formDataSchema.parse(formData);
-    
-      // Call the addUser function
-      const response = await addUser(undefined, formData);
-        if (response.error) {
-          console.error("Error creating user:", response.error);
-          setError('Email is already registered!');
-        } else {
-          console.log("User created successfully:", response.message);
-          setSuccessMessage('User created successfully');
-          //setTimeout(() => router.push('/login'), 2000);
-        }
+
+      const data = await processFormData(formData);
+
+      if (data.error) {
+        setSuccessMessage('');
+        setError('Email is already registered!');
+      } else {
+        setError('');
+        setSuccessMessage('User created successfully');
+        //setTimeout(() => router.push('/login'), 2000);
+      }
+        
     } catch (error) {
       if (error instanceof z.ZodError) {
         setError(error.errors.map(err => err.message).join(" "));

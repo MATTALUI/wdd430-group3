@@ -6,15 +6,13 @@ import {
   type Product,
   type ProductImage,
   type User,
-  type UserData,      
-  type DBUserInsert,  
   DBTableNames,
   type Review,
   type DBReview,
   type IQueryBuilder,
   SortOrders,
 } from "@/types";
-import type { Kysely } from "kysely";
+import type { Kysely,Generated } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
 import bcrypt from 'bcrypt'; 
 
@@ -26,18 +24,36 @@ const db = () => {
   return _db;
 };
 
-export async function createUser(userData: UserData) {
-  try {
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
+export const mapFormDataToDBUser = async (formData: any): Promise<DBUser> => {
+  console.log('mapFormDataToDBUser...');
+  const { firstName, lastName, email, password } = formData;
+  const passwordHash = await bcrypt.hash(password, 10);
 
+  const dbUser: DBUser = {
+    id: undefined as unknown as Generated<"id">, // Ensure correct type assignment
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    description: null, // or set this based on your formData
+    profile_image: null, // or set this based on your formData
+    password_hash: passwordHash,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  return dbUser;
+};
+
+export async function createUser(userData: DBUser) {
+  try {
     // Save user to the database
     const result = await db()
       .insertInto(DBTableNames.Users)
       .values({
-        first_name: userData.firstName,
-        last_name: userData.lastName,
+        first_name: userData.first_name,
+        last_name: userData.last_name,
         email: userData.email,
-        password_hash: hashedPassword,
+        password_hash: userData.password_hash,
         created_at: new Date(),
         updated_at: new Date(),
       })
@@ -51,7 +67,7 @@ export async function createUser(userData: UserData) {
       email: result.email,
     };
 
-    return { message: 'User created successfully', user };
+    return { message: true, user };
   } catch (error: any) {
     if (error.code === '23505') {
       // Duplicate key violation error
