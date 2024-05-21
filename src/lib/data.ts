@@ -66,14 +66,7 @@ export async function createUser(userData: DBUser) {
       .returning(['id', 'first_name', 'last_name', 'email'])
       .executeTakeFirstOrThrow();
 
-    const user = {
-      id: result.id.toString(),
-      firstName: result.first_name,
-      lastName: result.last_name,
-      email: result.email,
-    };
-
-    return { message: true, user };
+    return { message: true};
   } catch (error: any) {
     if (error.code === '23505') {
       // Duplicate key violation error
