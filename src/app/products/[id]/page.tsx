@@ -61,7 +61,7 @@ export default async function ProductPage({
                 <FaRegStar />
               </div>
               <div className="mt-4">
-                <p>"{review.text}"</p>
+                <p>{'"'}{review.text}{'"'}</p>
               </div>
               <div className="text-slate-600 text-sm">{review.createdAt.toDateString()}</div>
             </div>
