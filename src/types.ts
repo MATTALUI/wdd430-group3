@@ -61,14 +61,14 @@ export type Product = Timestamped & {
   description: string;
   images: ProductImage[];
   reviews: Review[];
-  sellerId: User["id"];
+  seller: Pick<User, "id" | "firstName" | "lastName" | "email">;
 }
 export type DBProduct =
   Pick<Product, "name" | "description"> &
   DBTimestamped &
   {
     id: Generated<ProductImage["id"]> | ID;
-    seller_id: Product["sellerId"];
+    seller_id: User["id"];
   };
 
 export type Review = Timestamped & {
@@ -107,7 +107,9 @@ export enum SortOrders {
 }
 
 export interface IQueryBuilder<T> {
-  filter?: Partial<T>;
+  filter?: Partial<T & {
+    search: string;
+  }>;
   sort?: Partial<{
     key: keyof T;
     order: SortOrders;
