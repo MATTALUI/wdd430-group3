@@ -20,12 +20,49 @@ import bcrypt from 'bcrypt';
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
 
-export let _db: Kysely<DataBase> | null = null;
-export const db = () => {
+let _db: Kysely<DataBase> | null = null;
+const db = () => {
   if (!_db) _db = createKysely<DataBase>();
   return _db;
 };
 
+export async function createUser(userData: UserData) {
+  try {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+    // Save user to the database
+    const result = await db()
+      .insertInto(DBTableNames.Users)
+      .values({
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+        email: userData.email,
+        password_hash: hashedPassword,
+        created_at: new Date(),
+        updated_at: new Date(),
+      })
+      .returning(['id', 'first_name', 'last_name', 'email'])
+      .executeTakeFirstOrThrow();
+
+    const user = {
+      id: result.id.toString(),
+      firstName: result.first_name,
+      lastName: result.last_name,
+      email: result.email,
+    };
+
+    return { message: 'User created successfully', user };
+  } catch (error: any) {
+    if (error.code === '23505') {
+      // Duplicate key violation error
+      console.error('Error creating user:', error.message);
+      return { message: 'Email is already registered', error: error.detail };
+    } else {
+      console.error('Error creating user:', error);
+      throw new Error('Failed to create user');
+    }
+  }
+}
 
 const mapDbUserToUser = (dbUser: DBUser): User => ({
   id: dbUser.id.toString(),
@@ -100,36 +137,6 @@ export const getUserAuthentication = async (filter: UserFilter) => {
   return { user, passwordHash };
 }
 
-// Function to create a user in the database
-// export const createUser = async (userData: UserData) => {
-//   try {
-//     // Hash the password
-//     const passwordHash = await bcrypt.hash(userData.password, 10);
-
-//     // Prepare the DBUserInsert object
-//     const dbUser: DBUserInsert = {
-//       first_name: userData.firstName,
-//       last_name: userData.lastName,
-//       email: userData.email,
-//       password_hash: passwordHash,
-//       description: null, // Default to null
-//       profile_image: null, // Default to null
-//       created_at: new Date(),
-//       updated_at: new Date(),
-//     };
-
-//     // Insert the new user into the database
-//     await db().insertInto(DBTableNames.Users).values(dbUser).execute();
-
-//     // Fetch and return the created user
-//     const createdUser = await getDBUser({ email: userData.email });
-//     return mapDbUserToUser(createdUser);
-//   } catch (error) {
-//     console.error('Error creating user:', error);
-//     throw new Error('Failed to create user');
-//   }
-// };
-
 export const getProducts = async ({
   filter: filterOverrides,
   sort: sortOverrides,
@@ -193,4 +200,5 @@ export const getProducts = async ({
   });
 
   return products;
+
 }

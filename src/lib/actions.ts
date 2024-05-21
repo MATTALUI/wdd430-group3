@@ -3,7 +3,7 @@
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcrypt';
-import { db } from '@/lib/data';
+import { createUser } from '@/lib/data';
 import { DBTableNames, UserData } from '@/types';
  
 export async function authenticate(
@@ -22,44 +22,6 @@ export async function authenticate(
       }
     }
     throw error;
-  }
-}
-
-export async function createUser(userData: UserData) {
-  try {
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-
-    // Save user to the database
-    const result = await db()
-      .insertInto(DBTableNames.Users)
-      .values({
-        first_name: userData.firstName,
-        last_name: userData.lastName,
-        email: userData.email,
-        password_hash: hashedPassword,
-        created_at: new Date(),
-        updated_at: new Date(),
-      })
-      .returning(['id', 'first_name', 'last_name', 'email'])
-      .executeTakeFirstOrThrow();
-
-    const user = {
-      id: result.id.toString(),
-      firstName: result.first_name,
-      lastName: result.last_name,
-      email: result.email,
-    };
-
-    return { message: 'User created successfully', user };
-  } catch (error: any) {
-    if (error.code === '23505') {
-      // Duplicate key violation error
-      console.error('Error creating user:', error.message);
-      return { message: 'Email is already registered', error: error.detail };
-    } else {
-      console.error('Error creating user:', error);
-      throw new Error('Failed to create user');
-    }
   }
 }
 
