@@ -45,6 +45,13 @@ export const mapFormDataToDBUser = async (formData: any): Promise<DBUser> => {
 
 export async function createUser(userData: DBUser) {
   try {
+    const createdAt = userData.created_at instanceof Date 
+      ? userData.created_at 
+      : new Date(userData.created_at as any);
+    const updatedAt = userData.updated_at instanceof Date 
+    ? userData.updated_at 
+    : new Date(userData.updated_at as any);
+
     // Save user to the database
     const result = await db()
       .insertInto(DBTableNames.Users)
@@ -53,8 +60,8 @@ export async function createUser(userData: DBUser) {
         last_name: userData.last_name,
         email: userData.email,
         password_hash: userData.password_hash,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: createdAt,
+        updated_at: updatedAt,
       })
       .returning(['id', 'first_name', 'last_name', 'email'])
       .executeTakeFirstOrThrow();
