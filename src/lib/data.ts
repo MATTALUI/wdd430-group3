@@ -25,17 +25,16 @@ const db = () => {
 };
 
 export const mapFormDataToDBUser = async (formData: any): Promise<DBUser> => {
-  console.log('mapFormDataToDBUser...');
   const { firstName, lastName, email, password } = formData;
   const passwordHash = await bcrypt.hash(password, 10);
 
   const dbUser: DBUser = {
-    id: undefined as unknown as Generated<"id">, // Ensure correct type assignment
+    id: undefined as unknown as Generated<"id">,
     first_name: firstName,
     last_name: lastName,
     email: email,
-    description: null, // or set this based on your formData
-    profile_image: null, // or set this based on your formData
+    description: null, 
+    profile_image: null,
     password_hash: passwordHash,
     created_at: new Date(),
     updated_at: new Date(),
