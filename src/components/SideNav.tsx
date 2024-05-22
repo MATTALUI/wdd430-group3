@@ -32,7 +32,7 @@ export default function SideNav({
   const links = useMemo(() =>
     [
       { text: "Products", href: "/products" },
-      user?.id && { text: "My Products", href: `/products?creator=${user.id}` },
+      user?.id && { text: "My Products", href: `/products?seller_id=${user.id}` },
       user?.id && { text: "My Profile", href: `/sellers/${user.id}` },
       !isLoggedIn && { text: "Login", href: "/login" },
     ].filter(l => !!l) as NavLink[],
@@ -43,13 +43,13 @@ export default function SideNav({
     <div
       onClick={toggleSidenav}
       className={clsx(
-        "fixed top-0 left-0 overflow-hidden transition-all h-screen",
+        "fixed top-0 left-0 overflow-hidden transition-all h-screen z-10",
         open ? "w-screen" : "w-0"
       )}
     >
       <div
         onClick={stopProp}
-        className="bg-accent w-9/12 h-screen pt-12 text-gray-50"
+        className="bg-accent w-9/12 h-screen pt-12 text-gray-50 drop-shadow-lg"
       >
         {links.map((link) => (
           <Link
