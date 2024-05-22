@@ -12,8 +12,9 @@ import {
   type IQueryBuilder,
   SortOrders,
 } from "@/types";
-import { type Kysely, sql } from "kysely";
+import { type Kysely, sql, Generated } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
+import bcrypt from 'bcrypt'; 
 import { omit, pick } from "lodash";
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
@@ -23,6 +24,61 @@ const db = () => {
   if (!_db) _db = createKysely<DataBase>();
   return _db;
 };
+
+export const mapFormDataToDBUser = async (formData: any): Promise<DBUser> => {
+  const { firstName, lastName, email, password } = formData;
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  const dbUser: DBUser = {
+    id: undefined as unknown as Generated<"id">,
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    description: null, 
+    profile_image: null,
+    password_hash: passwordHash,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  return dbUser;
+};
+
+export async function createUser(userData: DBUser) {
+  try {
+    const createdAt = userData.created_at instanceof Date 
+      ? userData.created_at 
+      : new Date(userData.created_at as any);
+    const updatedAt = userData.updated_at instanceof Date 
+    ? userData.updated_at 
+    : new Date(userData.updated_at as any);
+
+    // Save user to the database
+    const result = await db()
+      .insertInto(DBTableNames.Users)
+      .values({
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        email: userData.email,
+        password_hash: userData.password_hash,
+        created_at: createdAt,
+        updated_at: updatedAt,
+      })
+      .returning(['id', 'first_name', 'last_name', 'email'])
+      .executeTakeFirstOrThrow();
+
+    return { message: true};
+  } catch (error: any) {
+    if (error.code === '23505') {
+      // Duplicate key violation error
+      console.error('Error creating user:', error.message);
+      return { message: 'Email is already registered', error: error.detail };
+    } else {
+      console.error('Error creating user:', error);
+      throw new Error('Failed to create user');
+    }
+  }
+}
 
 const mapDbUserToUser = (dbUser: DBUser): User => ({
   id: dbUser.id.toString(),

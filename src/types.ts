@@ -29,6 +29,18 @@ export type DBUser =
     profile_image: string | null;
     password_hash: string;
   }
+// Additions for user data handling
+export interface UserData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+export type DBUserInsert = Omit<DBUser, 'id' | 'created_at' | 'updated_at'> & {
+  created_at?: Date;
+  updated_at?: Date;
+};
 
 export type ProductImage = Timestamped & {
   id: ID;

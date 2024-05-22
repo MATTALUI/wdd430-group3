@@ -2,6 +2,9 @@
 
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
+import { createUser } from '@/lib/data';
+import { mapFormDataToDBUser } from '@/lib/data';
+
  
 export async function authenticate(
   prevState: string | undefined,
@@ -21,3 +24,15 @@ export async function authenticate(
     throw error;
   }
 }
+
+export async function processFormData (formData: any)  {
+  try {
+    const dbUser = await mapFormDataToDBUser(formData);
+    const data = await createUser(dbUser);
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error('Error processing form data:', error);
+    throw new Error('Failed to process form data');
+  }
+};
