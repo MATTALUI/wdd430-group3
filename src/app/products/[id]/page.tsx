@@ -43,6 +43,30 @@ export default async function ProductPage({
       </div>
       <div className="mt-4">
         <h2>Reviews</h2>
+        {product.reviews.map((review) => (
+          <div
+            key={review.id}
+            className="bg-gray-50 rounded px-4 py-2 flex pt-2"
+          >
+            <div className="w-20">
+              <img src={"https://picsum.photos/300/300"} alt="seller profile pic" />
+            </div>
+            <div className="flex-1 ps-2">
+              <div>{`Reviewer Name`}</div>
+              <div className="flex">
+                <FaStar />
+                <FaStar />
+                <FaStar />
+                <FaRegStar />
+                <FaRegStar />
+              </div>
+              <div className="mt-4">
+                <p>{'"'}{review.text}{'"'}</p>
+              </div>
+              <div className="text-slate-600 text-sm">{review.createdAt.toDateString()}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
