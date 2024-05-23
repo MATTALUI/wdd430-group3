@@ -44,6 +44,7 @@ export const mapFormDataToDBUser = async (formData: any): Promise<DBUser> => {
   return dbUser;
 };
 
+
 export async function createUser(userData: DBUser) {
   try {
     const createdAt = userData.created_at instanceof Date 
@@ -77,6 +78,52 @@ export async function createUser(userData: DBUser) {
       console.error('Error creating user:', error);
       throw new Error('Failed to create user');
     }
+  }
+}
+
+export const mapFormDataToDBReview = async (formData: any): Promise<DBReview> => {
+  const { stars, text, product_id, reviewer_id } = formData;
+
+  const dbReview: DBReview = {
+    id: undefined as unknown as Generated<"id">,
+    stars: stars,
+    text: text,
+    product_id: product_id,
+    reviewer_id: reviewer_id, 
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  return dbReview;
+};
+
+export async function createReview(reviewData: DBReview) {
+  try {
+    // const createdAt = reviewData.created_at instanceof Date 
+    //   ? reviewData.created_at 
+    //   : new Date(reviewData.created_at as any);
+    // const updatedAt = reviewData.updated_at instanceof Date 
+    // ? reviewData.updated_at 
+    // : new Date(reviewData.updated_at as any);
+
+    // Save user to the database
+    const result = await db()
+      .insertInto(DBTableNames.Reviews)
+      .values({
+        stars: reviewData.stars,
+        text: reviewData.text,
+        product_id: reviewData.product_id,
+        reviewer_id: reviewData.reviewer_id,
+        // created_at: createdAt,
+        // updated_at: updatedAt,
+      })
+      .returning(['stars', 'text', 'product_id', 'reviewer_id'])
+      .executeTakeFirstOrThrow();
+
+    return  result;
+  } catch (error: any) {
+    console.error('Error creating review:', error);
+    throw new Error('Failed to create user');
   }
 }
 

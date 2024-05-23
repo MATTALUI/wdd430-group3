@@ -1,5 +1,7 @@
 import { getProduct } from "@/lib/data";
 import { FaRegStar, FaStar } from "react-icons/fa";
+import ReviewsForm from '@/components/ReviewsForm';
+
 
 interface IProductPageProps {
   params: {
@@ -41,6 +43,7 @@ export default async function ProductPage({
         <h2>Description</h2>
         <p>{product.description}</p>
       </div>
+      <ReviewsForm />
       <div className="mt-4">
         <h2>Reviews</h2>
         {product.reviews.map((review) => (
