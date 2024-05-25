@@ -91,16 +91,6 @@ export async function updateUser(userId: string, userData: User) {
   try {
     const updatedAt = new Date();
 
-    // Prepare fields for update, ensuring dates are properly handled
-    // const updatedFields: {
-    //   email: string;
-    //   updated_at: Date;
-    // } = {
-    //   email: newEmail,
-    //   updated_at: updatedAt,
-    // };
-    // Prepare fields for update, ensuring only allowed fields are included
-    // Prepare fields for update
     const updatedFields: Partial<Omit<DBUser, 'id' | 'created_at'>> = {
       email: userData.email,
       first_name: userData.firstName,
@@ -113,8 +103,6 @@ export async function updateUser(userId: string, userData: User) {
     const filteredFields = Object.fromEntries(
       Object.entries(updatedFields).filter(([_, v]) => v !== undefined)
     );
-
-    console.log('updatedFields->',updatedFields);
 
     //Update user in the database
     const result = await db()
