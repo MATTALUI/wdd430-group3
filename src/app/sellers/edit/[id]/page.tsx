@@ -30,9 +30,7 @@ export default async function EditSeller ({
             description: formData.get('description'),
         }
 
-        console.log(rawFormData);
         const res = await updateFormData(id, rawFormData);
-        console.log('res->',res.message);
         redirect(`/sellers/${id}`);       
     }
 

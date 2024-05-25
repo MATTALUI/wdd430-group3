@@ -39,9 +39,7 @@ export async function processFormData (formData: any)  {
 
 export async function updateFormData (id: string, formData: any)  {
   try {
-    console.log('formData->',formData);
     const res = await updateUser(id,formData);
-    console.log(res);
     return res;
   } catch (error) {
     console.error('Error processing form data:', error);
