@@ -2,7 +2,7 @@
 
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { createUser } from '@/lib/data';
+import { createUser, updateUser } from '@/lib/data';
 import { mapFormDataToDBUser } from '@/lib/data';
 
  
@@ -31,6 +31,18 @@ export async function processFormData (formData: any)  {
     const data = await createUser(dbUser);
     console.log(data);
     return data;
+  } catch (error) {
+    console.error('Error processing form data:', error);
+    throw new Error('Failed to process form data');
+  }
+};
+
+export async function updateFormData (id: string, formData: any)  {
+  try {
+    console.log('formData->',formData);
+    const res = await updateUser(id,formData);
+    console.log(res);
+    return res;
   } catch (error) {
     console.error('Error processing form data:', error);
     throw new Error('Failed to process form data');

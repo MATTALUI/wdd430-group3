@@ -80,6 +80,63 @@ export async function createUser(userData: DBUser) {
   }
 }
 
+type UserUpdateData = {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  description?: string;
+};
+
+export async function updateUser(userId: string, userData: User) {
+  try {
+    const updatedAt = new Date();
+
+    // Prepare fields for update, ensuring dates are properly handled
+    // const updatedFields: {
+    //   email: string;
+    //   updated_at: Date;
+    // } = {
+    //   email: newEmail,
+    //   updated_at: updatedAt,
+    // };
+    // Prepare fields for update, ensuring only allowed fields are included
+    // Prepare fields for update
+    const updatedFields: Partial<Omit<DBUser, 'id' | 'created_at'>> = {
+      email: userData.email,
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+      description: userData.description,
+      updated_at: updatedAt,
+    };
+
+    // Filter out undefined values to avoid setting them in the database
+    const filteredFields = Object.fromEntries(
+      Object.entries(updatedFields).filter(([_, v]) => v !== undefined)
+    );
+
+    console.log('updatedFields->',updatedFields);
+
+    //Update user in the database
+    const result = await db()
+      .updateTable(DBTableNames.Users)
+      .set(filteredFields)
+      .where('id', '=', userId)
+      .returning(['id', 'first_name', 'last_name', 'email'])
+      .executeTakeFirstOrThrow();
+
+    return { message: true, updatedUser: result };
+  } catch (error: any) {
+    if (error.code === '23505') {
+      // Duplicate key violation error
+      console.error('Error updating user:', error.message);
+      return { message: 'Email is already registered', error: error.detail };
+    } else {
+      console.error('Error updating user:', error);
+      throw new Error('Failed to update user');
+    }
+  }
+}
+
 const mapDbUserToUser = (dbUser: DBUser): User => ({
   id: dbUser.id.toString(),
   firstName: dbUser.first_name,
