@@ -80,13 +80,6 @@ export async function createUser(userData: DBUser) {
   }
 }
 
-type UserUpdateData = {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  description?: string;
-};
-
 export async function updateUser(userId: string, userData: User) {
   try {
     const updatedAt = new Date();
