@@ -20,7 +20,7 @@ export default async function EditSeller ({
     const { id } = params;
     const user = await getUser({ id });
     
-    async function updateUser(formData: FormData) {
+    async function updateProfile(formData: FormData) {
         'use server'
 
         const rawFormData = {
@@ -37,7 +37,7 @@ export default async function EditSeller ({
     return (
         <div>
             <div className="w-full max-w-xs">
-                <form action={updateUser} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <form action={updateProfile} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <h1>Edit Seller</h1>
                     <div className="mb-2">
                         <label
