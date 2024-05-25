@@ -3,6 +3,7 @@ import type { DBProduct, IQueryBuilder } from "@/types";
 import Link from "next/link";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import truncate from "lodash/truncate";
+import RatingStars from "./RatingStars";
 
 export default async function ProductList({
   filter,
@@ -25,7 +26,7 @@ export default async function ProductList({
           className="my-2 flex p-2 bg-gray-50 rounded-md hover:opacity-75 shadow"
         >
           <div className="flex-2">
-            <img src={product.images[0]?.src} alt="product image"/>
+            <img src={product.images[0]?.src} alt="product image" />
           </div>
           <div className="flex-4 ps-2">
             <div className="flex">
@@ -33,13 +34,9 @@ export default async function ProductList({
               <span className="ps-2 flex-1">${(Math.random() * 10).toFixed(2)}</span>
             </div>
             <div className="text-xs">Seller name here</div>
-            <div className="flex mb-4">
-              <FaStar />
-              <FaStar />
-              <FaStar />
-              <FaRegStar />
-              <FaRegStar />
-            </div>
+            <RatingStars
+              defaultValue={product.rating}
+            />
             <div className="max-h-40 text-sm opacity-50">
               {truncate(product.description, { length: 200 })}
             </div>
