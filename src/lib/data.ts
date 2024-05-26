@@ -89,6 +89,7 @@ export async function updateUser(userId: string, userData: User) {
       first_name: userData.firstName,
       last_name: userData.lastName,
       description: userData.description,
+      profile_image: userData.profileImage,
       updated_at: updatedAt,
     };
 
@@ -102,7 +103,7 @@ export async function updateUser(userId: string, userData: User) {
       .updateTable(DBTableNames.Users)
       .set(filteredFields)
       .where('id', '=', userId)
-      .returning(['id', 'first_name', 'last_name', 'email'])
+      .returning(['id', 'first_name', 'last_name', 'email', 'profile_image'])
       .executeTakeFirstOrThrow();
 
     return { message: true, updatedUser: result };
