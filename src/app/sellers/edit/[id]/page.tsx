@@ -104,7 +104,7 @@ export default async function EditSeller ({
                         <input
                             type="submit"
                             value="Save"
-                            className="bg-accent text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            className="bg-accent hover:opacity-75 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
                         />
                         <Link
                             className="inline-block align-baseline font-bold text-sm text-secondary"
