@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node -r dotenv/config ./scripts/seed2.js"
+    "seed": "node -r dotenv/config ./scripts/seed1.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.0.3",
