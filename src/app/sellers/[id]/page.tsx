@@ -8,6 +8,7 @@ import { Suspense } from "react";
 
 interface ISellersPageProps {
   params: ISellersPageParams;
+  searchParams: { profileUpdated?: string };
 }
 interface ISellersPageParams {
   id: string;
@@ -17,9 +18,11 @@ const PRODUCT_COUNT = 3;
 
 export default async function SellersPage({
   params,
+  searchParams,
 }: ISellersPageProps) {
   const { id } = params;
   const user = await getUser({ id });
+  const profileUpdated = searchParams.profileUpdated === 'true';
 
   return (
     <div>
@@ -34,6 +37,9 @@ export default async function SellersPage({
         {user.firstName} {user.lastName}
         <Link href={`/sellers/edit/${user.id}`} className="text-blue-600"> Edit</Link>
       </div>
+      {profileUpdated && (
+        <div className="mb-4 text-green-500">Profile updated successfully!</div>
+      )}
       <div className="mb-4">
         <div className="font-bold">My story</div>
         <div>
