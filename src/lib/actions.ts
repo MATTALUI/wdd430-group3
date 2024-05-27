@@ -2,8 +2,9 @@
 
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { createUser } from '@/lib/data';
-import { mapFormDataToDBUser } from '@/lib/data';
+import { createUser, createReview } from '@/lib/data';
+import { mapFormDataToDBUser, mapFormDataToDBReview } from '@/lib/data';
+import { DBReview } from '@/types';
 
  
 export async function authenticate(
@@ -31,6 +32,15 @@ export async function processFormData (formData: any)  {
     const data = await createUser(dbUser);
     console.log(data);
     return data;
+  } catch (error) {
+    console.error('Error processing form data:', error);
+    throw new Error('Failed to process form data');
+  }
+};
+
+export async function processReviewFormData (review: Omit<DBReview, "id">)  {
+  try {
+    await createReview(review);
   } catch (error) {
     console.error('Error processing form data:', error);
     throw new Error('Failed to process form data');
