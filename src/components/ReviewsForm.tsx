@@ -5,6 +5,7 @@ import { processReviewFormData } from "@/lib/actions";
 import { useSession } from "next-auth/react";
 import { z } from 'zod';
 import { Review } from "@/types";
+import RatingStars from "./RatingStars";
 
 // Define a Zod schema for the form data
 const formDataSchema = z.object({
@@ -17,21 +18,20 @@ export default function ReviewsForm() {
     const isLoggedIn = status === "authenticated";
 
     // State variables to store input field values
-    const [stars, setStars] = useState("");
+    const [stars, setStars] = useState("5");
     const [text, setText] = useState("");
 
 
-    const handleReview = useCallback( async () => {
+    const handleReview = useCallback(async () => {
         const product_id = window.location.pathname.substring(10);
 
         const reviewer_id = data?.user?.id;
 
         if (!reviewer_id) throw new Error("Anon user trying to create a review")
-        
 
         // Prepare form data
         const review = {
-            stars : +stars as Review['stars'],
+            stars: +stars as Review['stars'],
             text,
             product_id,
             reviewer_id,
@@ -40,7 +40,7 @@ export default function ReviewsForm() {
         };
         try {
             formDataSchema.parse(review);
-            const data = await processReviewFormData(review);
+            await processReviewFormData(review);
 
             window.location.reload();
         } catch (error) {
@@ -50,35 +50,34 @@ export default function ReviewsForm() {
                 console.error("Unexpected error:", error);
             }
         }
-        
-
     }, [stars, text, formDataSchema]);
+
+    const updateStars = useCallback((rating: Review["stars"]) => {
+        setStars(rating.toString())
+    }, [setStars]);
 
     return (
         <div className="w-full max-w-xs">
-            {isLoggedIn && <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            {isLoggedIn && <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4">
                 <h1 className="text-lg font-bold mb-2">Leave a review</h1>
                 <div className="mb-4">
                     <label
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                    htmlFor="stars"
+                        className="block text-gray-700 text-sm font-bold mb-2"
+                        htmlFor="stars"
                     >
-                    Leave a star review
+                        Leave a star review
                     </label>
-                    <select id="stars" onChange={(e) => setStars(e.target.value)}>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    </select>
+                    <RatingStars
+                        defaultValue={+stars}
+                        onChange={updateStars}
+                    />
                     <label
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                    htmlFor="text"
+                        className="block text-gray-700 text-sm font-bold mb-2"
+                        htmlFor="text"
                     >Leave a review</label>
                     <textarea name="text" id="text" onChange={(e) => setText(e.target.value)}></textarea>
-                    <button 
-                        className="bg-accent hover:opacity-75 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+                    <button
+                        className="bg-accent hover:opacity-75 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="button"
                         onClick={handleReview}
                     >

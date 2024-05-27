@@ -62,6 +62,7 @@ export type Product = Timestamped & {
   images: ProductImage[];
   reviews: Review[];
   seller: Pick<User, "id" | "firstName" | "lastName" | "email">;
+  rating: number;
 }
 export type DBProduct =
   Pick<Product, "name" | "description"> &
