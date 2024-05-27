@@ -7,8 +7,38 @@ const cleanupOldData = async (client) => {
   console.log("  Cleaning Old Data");
   await client.sql`DROP TABLE IF EXISTS group3_reviews;`;
   await client.sql`DROP TABLE IF EXISTS group3_product_images;`;
+  await client.sql`DROP TABLE IF EXISTS group3_product_categories;`;
   await client.sql`DROP TABLE IF EXISTS group3_products;`;
+  await client.sql`DROP TABLE IF EXISTS group3_categories;`;
   await client.sql`DROP TABLE IF EXISTS group3_users;`;
+}
+
+const seedCategories = async (client) => {
+  console.log("  Seeding Categories");
+
+  await client.sql`
+    CREATE TABLE IF NOT EXISTS group3_categories (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      name VARCHAR(255) NOT NULL
+    );
+  `;
+
+  const categories = ["Candles", "Jewelry", "Pottery", "Textiles", "Paintings", "Music"];
+
+  const createdCategories = await Promise.all(categories.map(async (name) => {
+    const result = await client.sql`
+      INSERT INTO group3_categories (name)
+      VALUES (${name})
+      RETURNING *;
+    `;
+    const [insertedCategory] = result.rows;
+    console.log(`    - Created category: ${insertedCategory.name} (${insertedCategory.id})`);
+    return insertedCategory;
+  }));
+
+  created.categories = createdCategories;
+
+  return;
 }
 
 const seedUsers = async (client) => {
@@ -159,6 +189,55 @@ const seedProducts = async (client) => {
   created.products = createdProducts;
 }
 
+const seedProductCategories = async (client) => {
+  console.log("  Seeding Product Categories");
+
+  await client.sql`
+    CREATE TABLE IF NOT EXISTS group3_product_categories (
+      product_id UUID NOT NULL,
+      category_id UUID NOT NULL,
+      PRIMARY KEY (product_id, category_id),
+      FOREIGN KEY (product_id) REFERENCES group3_products(id),
+      FOREIGN KEY (category_id) REFERENCES group3_categories(id)
+    );
+  `;
+
+  // Mapping of product names to corresponding category names
+  const productCategories = {
+    "Vanilla Dream Candle": ["Candles"],
+    "Lavender Fields Candle": ["Candles"],
+    "Campfire Nights Candle": ["Candles"],
+    "Cherry Blossom Candle": ["Candles"],
+    "Hunter's Track": ["Music"],
+  };
+
+  // Insert product-category associations
+  for (const productName in productCategories) {
+    const product = created.products.find((p) => p.name === productName);
+    if (product) {
+      const categories = productCategories[productName];
+      for (const categoryName of categories) {
+        const category = created.categories.find((c) => c.name === categoryName);
+        if (category) {
+          await client.sql`
+            INSERT INTO group3_product_categories (product_id, category_id)
+            VALUES (${product.id}, ${category.id});
+          `;
+          console.log(`    - Associated product "${productName}" with category "${categoryName}"`);
+        } else {
+          console.error(`Category "${categoryName}" not found for product "${productName}"`);
+        }
+      }
+    } else {
+      console.error(`Product "${productName}" not found`);
+    }
+  }
+
+  console.log("ProductCategories seeding completed");
+
+  return;
+}
+
 const seedReviews = async (client) => {
   console.log("  Seeding Reviews");
   const reviewerId = created.users[2].id;
@@ -197,7 +276,7 @@ const seedReviews = async (client) => {
       RETURNING *;
     `;
   }));
-  console.log(`    - Created ${createdReviews.length} reviews`);
+  console.log(`    - Created  ${createdReviews.length} reviews`);
   created.reviews = createdReviews;
 }
 
@@ -206,8 +285,11 @@ const main = async () => {
   console.log("Seeding Database");
   try {
     await cleanupOldData(client);
+    await seedCategories(client);
     await seedUsers(client);
+    
     await seedProducts(client);
+    await seedProductCategories(client);
     await seedReviews(client);
   } finally {
     client.end();
