@@ -97,16 +97,8 @@ export const mapFormDataToDBReview = async (formData: any): Promise<DBReview> =>
   return dbReview;
 };
 
-export async function createReview(reviewData: DBReview) {
+export async function createReview(reviewData: Omit<DBReview, "id">) {
   try {
-    // const createdAt = reviewData.created_at instanceof Date 
-    //   ? reviewData.created_at 
-    //   : new Date(reviewData.created_at as any);
-    // const updatedAt = reviewData.updated_at instanceof Date 
-    // ? reviewData.updated_at 
-    // : new Date(reviewData.updated_at as any);
-
-    // Save user to the database
     const result = await db()
       .insertInto(DBTableNames.Reviews)
       .values({
@@ -114,8 +106,8 @@ export async function createReview(reviewData: DBReview) {
         text: reviewData.text,
         product_id: reviewData.product_id,
         reviewer_id: reviewData.reviewer_id,
-        // created_at: createdAt,
-        // updated_at: updatedAt,
+        created_at: new Date(),
+        updated_at: new Date(),
       })
       .returning(['stars', 'text', 'product_id', 'reviewer_id'])
       .executeTakeFirstOrThrow();

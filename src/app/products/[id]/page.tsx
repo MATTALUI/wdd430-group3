@@ -43,9 +43,9 @@ export default async function ProductPage({
         <h2>Description</h2>
         <p>{product.description}</p>
       </div>
-      <ReviewsForm />
       <div className="mt-4">
         <h2>Reviews</h2>
+        <ReviewsForm />
         {product.reviews.map((review) => (
           <div
             key={review.id}

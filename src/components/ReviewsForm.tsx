@@ -13,8 +13,6 @@ const formDataSchema = z.object({
 });
 
 export default function ReviewsForm() {
-    const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
     const { status, data } = useSession();
     const isLoggedIn = status === "authenticated";
 
@@ -27,6 +25,8 @@ export default function ReviewsForm() {
         const product_id = window.location.pathname.substring(10);
 
         const reviewer_id = data?.user?.id;
+
+        if (!reviewer_id) throw new Error("Anon user trying to create a review")
         
 
         // Prepare form data
@@ -35,6 +35,8 @@ export default function ReviewsForm() {
             text,
             product_id,
             reviewer_id,
+            created_at: new Date(),
+            updated_at: new Date(),
         };
         try {
             formDataSchema.parse(review);
@@ -43,11 +45,9 @@ export default function ReviewsForm() {
             window.location.reload();
         } catch (error) {
             if (error instanceof z.ZodError) {
-                setError(error.errors.map(err => err.message).join(" "));
                 console.error("Unexpected error:", error.errors.map(err => err.message).join(" "));
             } else {
                 console.error("Unexpected error:", error);
-                setError('Failed to create review. Please try again later.');
             }
         }
         

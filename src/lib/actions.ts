@@ -38,12 +38,9 @@ export async function processFormData (formData: any)  {
   }
 };
 
-export async function processReviewFormData (review: DBReview)  {
+export async function processReviewFormData (review: Omit<DBReview, "id">)  {
   try {
-    console.log(review)
-    const data = await createReview(review);
-    // console.log(data);
-    // return data;
+    await createReview(review);
   } catch (error) {
     console.error('Error processing form data:', error);
     throw new Error('Failed to process form data');
