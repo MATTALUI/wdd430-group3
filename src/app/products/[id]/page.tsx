@@ -47,7 +47,7 @@ export default async function ProductPage({
         {product.reviews.map((review) => (
           <div
             key={review.id}
-            className="bg-gray-50 rounded px-4 py-2 flex pt-2"
+            className="bg-gray-50 rounded px-4 py-2 flex pt-2 mb-2"
           >
             <div className="w-20">
               <img src={"https://picsum.photos/300/300"} alt="seller profile pic" />
