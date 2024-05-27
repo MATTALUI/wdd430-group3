@@ -36,6 +36,7 @@ export default async function ProductList({
             <div className="text-xs">Seller name here</div>
             <RatingStars
               defaultValue={product.rating}
+              readonly
             />
             <div className="max-h-40 text-sm opacity-50">
               {truncate(product.description, { length: 200 })}

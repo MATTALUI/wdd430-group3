@@ -1,3 +1,4 @@
+import RatingStars from "@/components/RatingStars";
 import { getProduct } from "@/lib/data";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import ReviewsForm from '@/components/ReviewsForm';
@@ -17,20 +18,17 @@ export default async function ProductPage({
     <div>
       <div>
         {product.images.length && (
-          <img src={product.images[0].src} />
+          <img src={product.images[0].src} alt="product image"/>
         )}
       </div>
       <div className="flex justify-between">
         <h1>{product.name}</h1>
         <span>$420.69</span>
       </div>
-      <div className="flex">
-        <FaStar />
-        <FaStar />
-        <FaStar />
-        <FaRegStar />
-        <FaRegStar />
-      </div>
+      <RatingStars
+        defaultValue={product.rating}
+        readonly
+      />
       <div>
         <a
           href={`mailto:${product.seller.email}`}
@@ -56,13 +54,10 @@ export default async function ProductPage({
             </div>
             <div className="flex-1 ps-2">
               <div>{`Reviewer Name`}</div>
-              <div className="flex">
-                <FaStar />
-                <FaStar />
-                <FaStar />
-                <FaRegStar />
-                <FaRegStar />
-              </div>
+              <RatingStars
+                defaultValue={review.stars}
+                readonly
+              />
               <div className="mt-4">
                 <p>{'"'}{review.text}{'"'}</p>
               </div>

@@ -1,13 +1,13 @@
 "use client"
 
-import { Review } from "@/types";
+import { Product, Review } from "@/types";
 import { useCallback, useMemo, useState } from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
 
 interface IRatingStarsProps {
   defaultValue?: number;
   readonly?: boolean;
-  onChange?: (val: Review["stars"]) => void;
+  productId?: Product["id"];
 }
 
 const MIN_STARS = 1;
@@ -16,6 +16,7 @@ const MAX_STARS = 5;
 export default function RatingStars({
   defaultValue,
   readonly,
+  productId,
 }: IRatingStarsProps) {
   const [rating, setRating] = useState(defaultValue || 0);
 
@@ -37,18 +38,39 @@ export default function RatingStars({
       }, {});
   }, [setRating, readonly]);
 
+  const clickHandlers = useMemo(() => {
+    return new Array(MAX_STARS)
+      .fill(null)
+      .map((_, i) => i)
+      .reduce((handlers: Record<number, (e: React.MouseEvent) => void>, index) => {
+        handlers[index] = (e) => {
+          if (readonly || !productId) return;
+          e.preventDefault();
+          setRating(index + 1);
+          console.log(productId, index + 1);
+        }
+        return handlers;
+      }, {});
+  }, [setRating, readonly, productId]);
+
   const stars = useMemo(() => {
     return new Array(MAX_STARS).fill(null).map((_, i) => (
       i <= rating - 1 ? FaStar : FaRegStar
     ));
   }, [rating]);
 
+  const stopProp = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+  }, []);
+
   return (
-    <div className="flex mb-4">
+    <div className="flex mb-4" onClick={stopProp}>
       {stars.map((Star, index) => (
         <span
           key={index}
           onMouseEnter={enterHandlers[index]}
+          onClick={clickHandlers[index]}
           onMouseLeave={resetRating}
         >
           <Star />

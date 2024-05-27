@@ -14,7 +14,7 @@ import {
 } from "@/types";
 import { type Kysely, sql, Generated } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
-import bcrypt from 'bcrypt'; 
+import bcrypt from 'bcrypt';
 import { omit, pick } from "lodash";
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
@@ -34,7 +34,7 @@ export const mapFormDataToDBUser = async (formData: any): Promise<DBUser> => {
     first_name: firstName,
     last_name: lastName,
     email: email,
-    description: null, 
+    description: null,
     profile_image: null,
     password_hash: passwordHash,
     created_at: new Date(),
@@ -47,12 +47,12 @@ export const mapFormDataToDBUser = async (formData: any): Promise<DBUser> => {
 
 export async function createUser(userData: DBUser) {
   try {
-    const createdAt = userData.created_at instanceof Date 
-      ? userData.created_at 
+    const createdAt = userData.created_at instanceof Date
+      ? userData.created_at
       : new Date(userData.created_at as any);
-    const updatedAt = userData.updated_at instanceof Date 
-    ? userData.updated_at 
-    : new Date(userData.updated_at as any);
+    const updatedAt = userData.updated_at instanceof Date
+      ? userData.updated_at
+      : new Date(userData.updated_at as any);
 
     // Save user to the database
     const result = await db()
@@ -68,7 +68,7 @@ export async function createUser(userData: DBUser) {
       .returning(['id', 'first_name', 'last_name', 'email'])
       .executeTakeFirstOrThrow();
 
-    return { message: true};
+    return { message: true };
   } catch (error: any) {
     if (error.code === '23505') {
       // Duplicate key violation error
@@ -142,6 +142,7 @@ const mapDbProductToProduct = (dbProduct: DBProduct): Product => ({
     lastName: "Unavailable",
     email: ":(",
   },
+  rating: 0,
   createdAt: dbProduct.created_at as Date,
   updatedAt: dbProduct.updated_at as Date,
 });
@@ -280,7 +281,10 @@ export const getProducts = async ({
       "firstName",
       "lastName",
       "email",
-    ])
+    ]);
+    if (product.reviews.length) {
+      product.rating = Math.floor(product.reviews.reduce((tot, { stars }) => tot + stars, 0) / product.reviews.length);
+    }
   });
 
   return products;
