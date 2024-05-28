@@ -74,6 +74,7 @@ const seedProducts = async (client) => {
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         seller_id UUID NOT NULL,
         name VARCHAR(255) NOT NULL,
+        price INT NOT NULL,
         description TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW(),
