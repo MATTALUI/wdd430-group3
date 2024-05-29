@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 // Define a Zod schema for the form data
-const formDataSchema = z.object({
+const updateProfileSchema = z.object({
     firstName: z.string().trim().min(3, { message: "First name must be 3 or more characters long" }),
     lastName: z.string().trim().min(3, { message: "Last name must be 3 or more characters long" }),
     email: z.string().email({ message: "Invalid email format" }),
@@ -43,7 +43,7 @@ export default async function EditSeller ({
         }
 
         // Validate the form data using the Zod schema
-        const parsedFormData = formDataSchema.safeParse(rawFormData);
+        const parsedFormData = updateProfileSchema.safeParse(rawFormData);
 
         if (!parsedFormData.success) {
             const validationErrors = parsedFormData.error.errors.map(error => error.message);

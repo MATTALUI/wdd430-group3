@@ -43,7 +43,7 @@ export default async function SellersPage({
       <div className="mb-4">
         <div className="font-bold">My story</div>
         <div>
-          {user.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras maximus metus eu auctor venenatis. Cras ullamcorper lectus sit amet mi maximus, ac lobortis orci feugiat. Nullam non velit felis. Morbi sit amet neque quis dolor tempus rutrum eu a felis. Mauris ipsum leo, viverra at aliquet sit amet, feugiat nec tortor. Fusce ultrices consectetur turpis vel iaculis. Nam et faucibus quam, sed suscipit sem. Morbi suscipit aliquet ipsum, sit amet lacinia augue imperdiet ut. Fusce ut egestas lacus. Nullam gravida quam sapien, sed sollicitudin quam vestibulum vel. Integer vehicula ipsum sit amet metus condimentum malesuada. Aliquam erat volutpat. In imperdiet ante diam, eu ullamcorper erat tincidunt a. Aliquam orci nunc, tempus eu est vel, scelerisque consequat nisl. Sed vehicula elementum nisi, vitae fringilla mi malesuada tempor. Nullam ut velit porta risus laoreet ultrices in quis neque. Maecenas sit amet fermentum augue, iaculis dictum est. Maecenas eleifend, nisi eu elementum interdum, augue risus viverra libero, non mattis risus quam non mauris. Phasellus sed nulla augue. Etiam rutrum ultricies ornare. Nunc euismod purus vel quam tincidunt cursus sed in nunc. Mauris lobortis magna nec elit hendrerit, at bibendum tellus ornare. Mauris a pharetra nibh. Aliquam rutrum molestie urna non laoreet. "}
+          {user.description}
         </div>
       </div>
       <div>
