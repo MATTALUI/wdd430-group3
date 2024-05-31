@@ -1,7 +1,8 @@
-"use client"
 import Link from "next/link";
+import TopProducts from "@/components/popularItems";
+import { Suspense } from "react";
 
-export default function Dashboard() {
+export default async function Dashboard() {
   return (
     <div>
         <img
@@ -10,37 +11,9 @@ export default function Dashboard() {
             className="w-auto 0 h-auto sm:mx-40 mx-auto object-cover"
         />
 
-        <section className="mb-10 sm:mx-40">
-        <h2 className="text-xl font-bold my-5 text-center">Popular Items</h2>
-        <div className="grid grid-cols-3 gap-2 sm:gap-5 justify-items-center max-w-full">
-            <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                <Link href="/product/1" className="block text-center">
-                    <img src="https://picsum.photos/500/300" alt="Popular Item 1" className="w-full h-auto object-cover rounded-t-lg" />
-                    <div className="p-2">
-                    <span className="block text-gray-700 text-sm font-bold mb-2">Product 1</span>
-                    </div>
-                </Link>
-            </div>
-
-            <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                <Link href="/product/2" className="block text-center">
-                    <img src="https://picsum.photos/500/300" alt="Popular Item 2" className="w-full h-auto object-cover rounded-t-lg" />
-                    <div className="p-2">
-                    <span className="block text-gray-700 text-sm font-bold mb-2">Product 2</span>
-                    </div>
-                </Link>
-            </div>
-
-            <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                <Link href="/product/3" className="block text-center">
-                    <img src="https://picsum.photos/500/300" alt="Popular Item 3" className="w-full h-auto object-cover rounded-t-lg" />
-                    <div className="p-2">
-                    <span className="block text-gray-700 text-sm font-bold mb-2">Product 3</span>
-                    </div>
-                </Link>
-            </div>
-        </div>
-        </section>
+        <Suspense>
+            <TopProducts />
+        </Suspense>
 
 
         <section className="mb-10 sm:mx-40">

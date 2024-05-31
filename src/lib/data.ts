@@ -295,3 +295,24 @@ export const getProduct = async (id: DBProduct["id"]): Promise<Product> => {
   if (!products.length) throw new Error(`Product not found for id: ${id}`);
   return products[0];
 }
+
+export const getRandomProducts = async (): Promise<Product[]> => {
+  // First, fetch all product IDs from the database
+  const productIdsResults = await db()
+    .selectFrom(DBTableNames.Products)
+    .select('id')
+    .execute();
+  
+  // Extract the product IDs from the results
+  const productIds = productIdsResults.map(result => result.id);
+  
+  // Shuffle the product IDs and select the first three
+  const shuffledProductIds = productIds.sort(() => 0.5 - Math.random());
+  const randomProductIds = shuffledProductIds.slice(0, 3);
+  
+  // Fetch each random product by ID using the existing getProduct function
+  const randomProductsPromises = randomProductIds.map(id => getProduct(id));
+  const randomProducts = await Promise.all(randomProductsPromises);
+  
+  return randomProducts;
+}
