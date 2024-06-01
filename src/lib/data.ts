@@ -133,6 +133,7 @@ const mapDbUserToUser = (dbUser: DBUser): User => ({
 const mapDbProductToProduct = (dbProduct: DBProduct): Product => ({
   id: dbProduct.id.toString(),
   name: dbProduct.name,
+  price: dbProduct.price,
   description: dbProduct.description,
   images: [],
   reviews: [],
