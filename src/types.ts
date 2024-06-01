@@ -93,6 +93,8 @@ export enum DBTableNames {
   Products = "group3_products",
   ProductImages = "group3_product_images",
   Reviews = "group3_reviews",
+  Categories = "group3_categories",
+  CategoryPictures = "group3_category_pictures",
 };
 
 export type DataBase = {
@@ -100,7 +102,30 @@ export type DataBase = {
   [DBTableNames.Products]: DBProduct;
   [DBTableNames.ProductImages]: DBProductImage;
   [DBTableNames.Reviews]: DBReview;
+  [DBTableNames.Categories]: DBCategory;
+  [DBTableNames.CategoryPictures]: DBCategoryPicture;
 };
+
+export type Category = {
+  id: ID;
+  name: string;
+  pictureSrc: string | null;
+}
+
+export type DBCategory = {
+  id: Generated<Category["id"]> | ID;
+  name: string;
+} & DBTimestamped;
+
+export type CategoryPicture = {
+  categoryId: Category["id"];
+  src: string;
+}
+
+export type DBCategoryPicture = {
+  category_id: CategoryPicture["categoryId"];
+  src: string;
+} & DBTimestamped;
 
 export enum SortOrders {
   Ascending = "asc",
