@@ -5,12 +5,14 @@ import React, { useState } from "react";
 import clsx from "clsx";
 import { createProduct } from "@/lib/actions";
 import { useSession } from "next-auth/react";
+import Axios from "axios";
 
 export default function ProductForm( {} ) {
-  const user = useSession().data?.user;
+  const session = useSession();
+  const seller_id = session.data?.user?.id
 
   const [image, setImage] = useState<string[]>([]);
-  // const [fileObjects, setFileObjects] = useState<File[]>([]);
+  const [fileObjects, setFileObjects] = useState<File[]>([]);
   const [selecta, setSelecta] = useState<string[]>([]);
   const [current, setCurrent] = useState(0);
   const [names, setNames] = useState<string[]>([]);
@@ -20,70 +22,90 @@ export default function ProductForm( {} ) {
 
     if(selecta.length > image.length) {
       setError("Finish loading the image before creating a new one.");
-      return
+      return;
     } else if(selecta.length >= 5) {
       setError("You can only add a maximum of 5 images per product.")
-    } else {
-      const newSelecta = [ ...selecta, `image${selecta.length + 1}`];
-      setSelecta(newSelecta);
-    }
+      return;
+    } 
+    const newSelecta = [ ...selecta, `image${selecta.length + 1}`];
+    setSelecta(newSelecta);
   }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const allFiles = e.target.files;
+    const MAX_FILE_SIZE = 1024 * 1024 * 5; // 5 Megabytes
 
     if(allFiles && allFiles.length > 0) {
       const firstFile = allFiles[0];
+
+      // Check if the file size exceeds the limit
+      if (firstFile.size > MAX_FILE_SIZE) {
+        setError("File size exceeds the limit of 5MB. Please choose a smaller image.");
+        e.target.value = ""; // Clear the file input value
+        return;
+      }
+
       const firstFileAsUrl  = URL.createObjectURL(firstFile);
 
       if(names.includes(firstFile.name)) {
         setError("This image has already been loaded.");
-        return
-      } else {
-          setImage([ ...image, firstFileAsUrl]);
-          // setFileObjects([...fileObjects, firstFile]);
-          setNames([ ...names, firstFile.name]);
-          setError("");
+        return;
       }
+
+        setImage([ ...image, firstFileAsUrl]);
+        setFileObjects([...fileObjects, firstFile]);
+        setNames([ ...names, firstFile.name]);
+        setError("");
     }
   }
-  
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  
-  //   const form = e.currentTarget;
-  //   const formData = new FormData(form);
-  
-  //   // Append image files to the FormData object
-  //   fileObjects.forEach((file) => {
-  //     formData.append("images", file);
-  //   });
-  // };
 
-  const deleteImage = (image1: string, selecta1: string) => {
-    const imgIndex = image.indexOf(image1);
-    const selectaIndex = selecta.indexOf(selecta1);
-
+  const deleteImage = (imagePreview: string, selectaItem: string) => {
+    const imgIndex = image.indexOf(imagePreview);
+    const selectaIndex = selecta.indexOf(selectaItem);
 
     if(selectaIndex !== -1) {
       const newSelecta = selecta.filter((_, index) => index !== selectaIndex);
       const newImage = image.filter((_, index) => index !== imgIndex);
       const newNames = names.filter((name) => name !== names[imgIndex]);
-      // const newFileObjects = fileObjects.filter((_, index) => index !== imgIndex);
+      const newFileObjects = fileObjects.filter((_, index) => index !== imgIndex);
 
       setSelecta(newSelecta);
       setImage(newImage);
       setNames(newNames);
-      // setFileObjects(newFileObjects);
+      setFileObjects(newFileObjects);
     }
   }
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const imagesUrls: string[] = [];
+  
+    // Upload Images to Cloudinary and get image url to store in DB:
+    await Promise.all(fileObjects.map(async (file) => {
+      formData.append("file", file);
+      formData.append("upload_preset", "handcrafted-haven");
+      const res = await Axios.post("https://api.cloudinary.com/v1_1/dn72ezrxw/image/upload", formData);
+        const imageUrl: string = res.data.secure_url;
+        imagesUrls.push(imageUrl);
+    }));
+
+    await Promise.all(imagesUrls);
+
+    // Now that all images are uploaded, append URLs to formData
+    formData.set("images", JSON.stringify(imagesUrls));
+    await createProduct(formData); // Call the createProduct action
+    
+  };
+
   return (
     <div className="w-full max-w-xs">
-      <form action={createProduct}  className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div>
         <div className="mb-4">
-            <input type="hidden" id="seller_id" name="seller_id" value={user?.id}/>
+            <input type="hidden" id="seller_id" name="seller_id" value={seller_id}/>
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="name"
