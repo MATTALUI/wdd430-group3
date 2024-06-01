@@ -1,6 +1,7 @@
 "use server"
 
 import { signIn } from '@/auth';
+import { sql } from '@vercel/postgres';
 import { AuthError } from 'next-auth';
 import { createUser, createReview } from '@/lib/data';
 import { mapFormDataToDBUser, mapFormDataToDBReview } from '@/lib/data';
@@ -8,8 +9,6 @@ import { DBReview } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from "zod";
-import { sql } from '@vercel/postgres';
-
  
 export async function authenticate(
   prevState: string | undefined,
@@ -29,7 +28,6 @@ export async function authenticate(
     throw error;
   }
 }
-
 
 export async function processFormData (formData: any)  {
   try {
@@ -84,27 +82,23 @@ export async function createProduct(formData: FormData) {
     images: formData.get("images")
   });
 
-  console.log("Seller_id: ", seller_id);
+  const createdProduct = await sql`
+    INSERT INTO group3_products (seller_id, name, price, description)
+    VALUES (${seller_id}, ${name}, ${price}, ${description})
+    RETURNING *;
+  `;
 
+  const [insertedProduct] = createdProduct.rows;
+  const pId = insertedProduct.id;
+  const imagesUrls = JSON.parse(images);
 
-    const createdProduct = await sql`
-      INSERT INTO group3_products (seller_id, name, price, description)
-      VALUES (${seller_id}, ${name}, ${price}, ${description})
-      RETURNING *;
-    `;
-
-    const [insertedProduct] = createdProduct.rows;
-    const pId = insertedProduct.id;
-    const imagesUrls = JSON.parse(images);
-
-    imagesUrls.forEach(async (url: string) => {
-      await sql`
-      INSERT INTO group3_product_images (src, product_id)
-      VALUES (${url}, ${pId})
-      RETURNING *;
-    `;
-    });
-    console.log("The images have been inserted in the images table.");
+  imagesUrls.forEach(async (url: string) => {
+    await sql`
+    INSERT INTO group3_product_images (src, product_id)
+    VALUES (${url}, ${pId})
+    RETURNING *;
+  `;
+  });
 
   revalidatePath('/products/'); // Clear cache and trigger new request to the server
   redirect('/products'); // Redirect the user back to the /products page
