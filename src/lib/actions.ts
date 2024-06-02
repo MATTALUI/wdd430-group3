@@ -36,7 +36,7 @@ export async function processFormData (formData: any)  {
   }
 };
 
-export async function updateFormData (id: string, formData: any)  {
+export async function updateProfileFormData (id: string, formData: any)  {
   try {
     const res = await updateUser(id,formData);
     return res;

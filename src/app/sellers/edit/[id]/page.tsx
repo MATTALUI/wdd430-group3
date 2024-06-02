@@ -1,7 +1,7 @@
 import React from 'react'
 import { getUser } from "@/lib/data";
 import Link from "next/link";
-import { updateFormData } from '@/lib/actions';
+import { updateProfileFormData } from '@/lib/actions';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -52,7 +52,7 @@ export default async function EditSeller ({
             return;
         }
 
-        const res = await updateFormData(id, parsedFormData.data);
+        const res = await updateProfileFormData(id, parsedFormData.data);
         if (res) {
             redirect(`/sellers/${id}?profileUpdated=true`);
         } else {
