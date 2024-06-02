@@ -33,8 +33,10 @@ export default async function SellersPage({
           className="w-full block"
         />
       </div>
-      <div className="mb-5 text-lg font-bold">
+      <div className="mb-1 text-lg font-bold">
         {user.firstName} {user.lastName}
+      </div>
+      <div className="mb-2 text-sm">
         <Link href={`/sellers/edit/${user.id}`} className="text-blue-600"> Edit</Link>
       </div>
       {profileUpdated && (
