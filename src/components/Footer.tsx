@@ -1,4 +1,5 @@
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaXTwitter, } from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -27,7 +28,7 @@ export default function Footer() {
                 <FaFacebook />
               </a>
               <a href="https://www.twitter.com/example" target="_blank" className="mr-2">
-                <FaTwitter />
+                <FaXTwitter />
               </a>
               <a href="https://www.instagram.com/example" target="_blank" className="mr-2">
                 <FaInstagram />
