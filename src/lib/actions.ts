@@ -2,7 +2,7 @@
 
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { createUser, createReview, updateUser } from '@/lib/data'; // Update import statements
+import { createUser, createReview, updateUser } from '@/lib/data';
 import { mapFormDataToDBUser, mapFormDataToDBReview } from '@/lib/data';
 import { DBReview } from '@/types';
 
@@ -46,11 +46,11 @@ export async function updateProfileFormData (id: string, formData: any)  {
   }
 };
 
-export async function processReviewFormData(review: Omit<DBReview, 'id'>) {
+export async function processReviewFormData (review: Omit<DBReview, "id">)  {
   try {
     await createReview(review);
   } catch (error) {
     console.error('Error processing form data:', error);
     throw new Error('Failed to process form data');
   }
-}
+};
