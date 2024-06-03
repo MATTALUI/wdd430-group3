@@ -5,7 +5,6 @@ import { AuthError } from 'next-auth';
 import { createUser, updateUser } from '@/lib/data';
 import { mapFormDataToDBUser } from '@/lib/data';
 
- 
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData,

@@ -16,6 +16,7 @@ import { type Kysely, sql, Generated } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
 import bcrypt from 'bcrypt'; 
 import { omit, pick } from "lodash";
+import { z } from 'zod';
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
 
@@ -93,28 +94,21 @@ export async function updateUser(userId: string, userData: User) {
       updated_at: updatedAt,
     };
 
-    // Filter out undefined values to avoid setting them in the database
-    const filteredFields = Object.fromEntries(
-      Object.entries(updatedFields).filter(([_, v]) => v !== undefined)
-    );
-
-    //Update user in the database
+    // Update user in the database
     const result = await db()
       .updateTable(DBTableNames.Users)
-      .set(filteredFields)
+      .set(updatedFields as any)
       .where('id', '=', userId)
       .returning(['id', 'first_name', 'last_name', 'email', 'profile_image'])
       .executeTakeFirstOrThrow();
 
-    return { message: true, updatedUser: result };
+    return { status: true, message: 'Operation successful', updatedUser: result };
+  
   } catch (error: any) {
     if (error.code === '23505') {
-      // Duplicate key violation error
-      console.error('Error updating user:', error.message);
       return { message: 'Email is already registered', error: error.detail };
     } else {
-      console.error('Error updating user:', error);
-      throw new Error('Failed to update user');
+      return { status: false, message: 'An error occurred', updatedUser: null };
     }
   }
 }
@@ -291,3 +285,11 @@ export const getProduct = async (id: DBProduct["id"]): Promise<Product> => {
   if (!products.length) throw new Error(`Product not found for id: ${id}`);
   return products[0];
 }
+
+export const updateProfileSchema = z.object({
+  firstName: z.string().trim().min(3, { message: "First name must be 3 or more characters long" }),
+  lastName: z.string().trim().min(3, { message: "Last name must be 3 or more characters long" }),
+  email: z.string().email({ message: "Invalid email format" }),
+  description: z.string().optional(),
+  profileImage: z.string().optional(),
+});

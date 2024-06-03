@@ -1,19 +1,8 @@
 import React from 'react'
-import { getUser } from "@/lib/data";
+import { getUser, updateProfileSchema } from "@/lib/data";
 import Link from "next/link";
 import { updateProfileFormData } from '@/lib/actions';
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
-
-// Define a Zod schema for the form data
-const updateProfileSchema = z.object({
-    firstName: z.string().trim().min(3, { message: "First name must be 3 or more characters long" }),
-    lastName: z.string().trim().min(3, { message: "Last name must be 3 or more characters long" }),
-    email: z.string().email({ message: "Invalid email format" }),
-    description: z.string().optional(),
-    profileImage: z.string().optional()
-});
-
 
 interface ISellersPageProps {
     params: ISellersPageParams;
