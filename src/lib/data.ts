@@ -121,7 +121,7 @@ const mapDbUserToUser = (dbUser: DBUser): User => ({
   description: dbUser.description,
   profileImage: dbUser.profile_image,
   createdAt: dbUser.created_at as Date,
-  updatedAt: dbUser.created_at as Date,
+  updatedAt: dbUser.updated_at as Date,
 });
 
 const mapDbProductToProduct = (dbProduct: DBProduct): Product => ({
