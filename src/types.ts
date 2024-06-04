@@ -59,13 +59,14 @@ export type Product = Timestamped & {
   id: ID;
   name: string;
   description: string;
+  price: number;
   images: ProductImage[];
   reviews: Review[];
   seller: Pick<User, "id" | "firstName" | "lastName" | "email">;
   rating: number;
 }
 export type DBProduct =
-  Pick<Product, "name" | "description"> &
+  Pick<Product, "name" | "description" | "price"> &
   DBTimestamped &
   {
     id: Generated<ProductImage["id"]> | ID;

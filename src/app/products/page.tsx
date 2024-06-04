@@ -4,6 +4,7 @@ import ProductsSearch from "@/components/ProductsSearch";
 import { DBProduct, SortOrders } from "@/types";
 import { pick } from "lodash";
 import { Suspense } from "react";
+import { CreateProduct } from "@/components/Buttons";
 
 const filterParams = [
   'seller_id',
@@ -33,6 +34,7 @@ export default async function ProductsPage({
 
   return (
     <div>
+      <CreateProduct />
       <ProductsSearch />
       <div>
         <Suspense fallback={<ProductListSkeletons />}>

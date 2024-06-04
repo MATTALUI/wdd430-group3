@@ -2,7 +2,8 @@ import RatingStars from "@/components/RatingStars";
 import { getProduct } from "@/lib/data";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import ReviewsForm from '@/components/ReviewsForm';
-
+import { EditProduct } from "@/components/Buttons";
+import Image from "next/image";
 
 interface IProductPageProps {
   params: {
@@ -16,14 +17,17 @@ export default async function ProductPage({
 
   return (
     <div>
-      <div>
-        {product.images.length && (
-          <img src={product.images[0].src} alt="product image"/>
+      <EditProduct id={productId}/>
+      <div className="w-full flex-wrap items-center justify-center justify-items-center object-contain">
+        {product.images.length > 0 && (
+          product.images.map(img => (
+            <Image className="p-2" width={250} height={250} key={img.id} src={img.src} alt="product image" />
+          ))
         )}
       </div>
-      <div className="flex justify-between">
-        <h1>{product.name}</h1>
-        <span>$420.69</span>
+      <div className="flex font-bold justify-between">
+        <h1 className="text-primary text-xl">{product.name}</h1>
+        <span >USD$ {product.price}</span>
       </div>
       <RatingStars
         defaultValue={product.rating}
