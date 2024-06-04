@@ -20,7 +20,7 @@ export default async function TopProducts() {
                             >
                                 <img
                                     src={product.images[0]?.src}
-                                    alt={product.name}
+                                    alt=""
                                     className="w-full h-auto object-cover rounded-t-lg"
                                 />
                                 <div className="p-2">

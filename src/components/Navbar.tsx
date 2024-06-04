@@ -27,13 +27,14 @@ export default function Navbar() {
         <div>
         <Image 
             src={logoImage} 
-            alt="Handcrafted Haven"
+            alt=""
             placeholder="blur"
             style={{
               width: '220px',
               height: 'auto'}}
             />
         </div>
+        <h1 className="invisible">Handcrafted Haven</h1>
       </nav>
       <SideNav
         open={sidenavOpen}

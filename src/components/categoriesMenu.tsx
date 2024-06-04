@@ -17,7 +17,7 @@ export default async function CategoriesMenu(){
                         >
                             <img
                                 src={cat.pictureSrc ?? ""} 
-                                alt={cat.name} 
+                                alt="" 
                                 className="max-w-200 h-auto object-cover rounded-full" 
                             />
                             <div className="absolute inset-0 bg-black opacity-50 rounded-full"></div>
