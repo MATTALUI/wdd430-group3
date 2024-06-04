@@ -18,6 +18,7 @@ const orderKeys = [
 ]
 
 const categoryKeys = [
+  { label: "All Categories", value: "" },
   { label: "Candles", value: "d0e73609-8c23-491f-8044-361e3bad95ba02ef648f-f4a5-4852-b3fd-0cc17e8cc2999c152eac-515f-4429-b610-65ff1f4624a004e5ea35-2663-4cb4-bff2-cbd8b0b387eb" },
   { label: "Jewelry", value: "empty" },
   { label: "Pottery", value: "empty" },
