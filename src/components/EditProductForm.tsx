@@ -1,17 +1,17 @@
 "use client";
 
 import { BiPlus, BiImageAdd, BiTrash } from "react-icons/bi";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
-import { createProduct } from "@/lib/actions";
-import { useSession } from "next-auth/react";
+import { editProduct } from "@/lib/actions";
 import Axios from "axios";
+import { DeleteProduct } from "./Buttons";
+import { Product } from "@/types";
 import Image from "next/image";
+import { ProductImage } from "@/types";
 
-
-export default function ProductForm( {} ) {
-  const session = useSession();
-  const seller_id = session.data?.user?.id
+export default function ProductForm( { product }: { product: Product } ) {
+  const updateProductWithId = editProduct.bind(null, product.id);
 
   const [image, setImage] = useState<string[]>([]);
   const [fileObjects, setFileObjects] = useState<File[]>([]);
@@ -19,6 +19,17 @@ export default function ProductForm( {} ) {
   const [current, setCurrent] = useState(0);
   const [names, setNames] = useState<string[]>([]);
   const [error, setError] = useState("");
+
+  // Initialize state with product images
+  useEffect(() => {
+    if (product && product.images) {
+      const productImages = product.images.map(img => img.src);
+      setImage(productImages);
+      setSelecta(productImages.map((_, index) => `image${index + 1}`));
+      setCurrent(0);
+    }
+  }, [product]);
+
 
   const addSelecta = () => {
 
@@ -98,17 +109,19 @@ export default function ProductForm( {} ) {
 
     // Now that all images are uploaded, append URLs to formData
     formData.set("images", JSON.stringify(imagesUrls));
+    await updateProductWithId(formData); // Call the createProduct action
     
-    const res = await createProduct(formData); // Call the createProduct action
-
-  }
+  };
 
   return (
-    <div className="w-full max-w-xs">
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div className="w-full max-w-xs bg-white rounded">
+      <div className="flex p-2 justify-end">
+        <DeleteProduct id={product.id}/>
+      </div>
+      <form onSubmit={handleSubmit} className="shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div>
         <div className="mb-4">
-            <input type="hidden" id="seller_id" name="seller_id" value={seller_id}/>
+            <input type="hidden" id="seller_id" name="seller_id" value={product.seller.id}/>
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="name"
@@ -119,7 +132,7 @@ export default function ProductForm( {} ) {
               id="name"
               type="text"
               name="name"
-              aria-describedby="name-error"
+              defaultValue={product.name}
             />
           </div>
           <div className="mb-4">
@@ -134,7 +147,7 @@ export default function ProductForm( {} ) {
               type="text"
               name="price"
               placeholder="$100.0"
-              aria-describedby="price-error"
+              defaultValue={product.price}
             />
           </div>
           <div className="mb-4">
@@ -147,7 +160,7 @@ export default function ProductForm( {} ) {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline has-error:border-rose-500"
               id="description"
               name="description"
-              aria-describedby="description-error"
+              defaultValue={product.description}
             />
           </div>
           <div className="mb-4">
@@ -161,17 +174,18 @@ export default function ProductForm( {} ) {
               <div className="w-full h-52 bg-light flex items-center justify-center relative rounded">
                 
                 <div className="absolute bottom-0 flex items-center justify-center">
-                  {
+                  
+                    {
                     image.map((item, index:number) => (
-                      <div className={clsx("w-2.5 h-2.5 m-1.5 bg-white rounded-sm cursor-pointer focus:outline-none focus:ring", current===index && "bg-primary")}
+                      <div key={index} className={clsx("w-2.5 h-2.5 m-1.5 bg-white rounded-sm cursor-pointer focus:outline-none focus:ring", current===index && "bg-primary")}
                       onClick={() => setCurrent(index)}></div>
                     ))
                   }
                 </div>
                 {
                   image.length < 1 
-                  ? null 
-                  : <Image className="w-11/12 h-11/12 max-w-full max-h-full object-contain" 
+                  ? null
+                  : <Image className="max-w-11/12 max-h-11/12 object-contain" 
                       src={image[current]} 
                       width={250}
                       height={208}
@@ -182,7 +196,7 @@ export default function ProductForm( {} ) {
                 <div className="w-11/12 flex items-center justify-start">
                   {
                     selecta.map((item, index:number) => (
-                      <div className="w-24 h-24 bg-light-trans mr-2.5 rounded flex items-center justify-center">
+                      <div key={index} className="w-24 h-24 bg-light-trans mr-2.5 rounded flex items-center justify-center">
                         {
                           index + 1 > image.length
                             ? <div>
@@ -199,23 +213,22 @@ export default function ProductForm( {} ) {
                               </div>
                           : <div className="relative max-w-24 max-h-24 overflow-hidden flex justify-center items-center"> 
                               <label className="absolute top-1 left-1 text-primary rounded bg-white font-bold cursor-pointer" onClick={() => deleteImage(image[index], item)}>
-                                <BiTrash/>
+                                <BiTrash className="text-primary font-bold cursor-pointer"/>
                               </label>
                               <Image 
                                 className="object-scale-down rounded" 
-                                src={image[index]}
+                                src={image[index]} 
                                 width={96}
                                 height={96}
-                                alt="Product Image thumbnail" 
+                                alt="" 
                                 onClick={() => setCurrent(index)}/>
                             </div>
                         }
-                        
                       </div>
                     ))
                   }
                 </div>
-                <div className="bg-accent rounded focus:outline-none focus:shadow-outline ">
+                <div className="bg-accent rounded focus:outline-none focus:shadow-outline">
                   <button type="button" 
                     className="rounded-md text-white p-2 flex cursor-pointer" 
                     onClick={addSelecta}>
@@ -228,8 +241,9 @@ export default function ProductForm( {} ) {
           </div>
         </div>
           <div className="flex items-center justify-center">
-            <button type="submit" className={"bg-accent text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"}>
-              Create Product
+            <button type="submit" 
+              className="bg-accent text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              Save Edit
             </button>
           </div>
       </form>

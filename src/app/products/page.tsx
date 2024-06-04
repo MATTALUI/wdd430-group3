@@ -4,7 +4,7 @@ import ProductsSearch from "@/components/ProductsSearch";
 import { DBProduct, SortOrders } from "@/types";
 import { pick } from "lodash";
 import { Suspense } from "react";
-import Link from "next/link";
+import { CreateProduct } from "@/components/Buttons";
 
 const filterParams = [
   'seller_id',
@@ -34,10 +34,7 @@ export default async function ProductsPage({
 
   return (
     <div>
-      <Link href={`/products/new`}
-          className="bg-accent mb-4 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-          Add New Product
-      </Link>
+      <CreateProduct />
       <ProductsSearch />
       <div>
         <Suspense fallback={<ProductListSkeletons />}>
