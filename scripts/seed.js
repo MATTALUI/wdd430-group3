@@ -8,6 +8,7 @@ const cleanupOldData = async (client) => {
   await client.sql`DROP TABLE IF EXISTS group3_reviews;`;
   await client.sql`DROP TABLE IF EXISTS group3_product_images;`;
   await client.sql`DROP TABLE IF EXISTS group3_product_categories;`;
+  await client.sql`DROP TABLE IF EXISTS group3_category_pictures;`;
   await client.sql`DROP TABLE IF EXISTS group3_products;`;
   await client.sql`DROP TABLE IF EXISTS group3_categories;`;
   await client.sql`DROP TABLE IF EXISTS group3_users;`;
@@ -40,6 +41,59 @@ const seedCategories = async (client) => {
 
   return;
 }
+
+
+const seedCategoryPictures = async (client) => {
+  console.log("  Seeding Category Pictures");
+
+  // Create table
+  await client.sql`
+    CREATE TABLE IF NOT EXISTS group3_category_pictures (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      src VARCHAR(255) NOT NULL,
+      category_id UUID NOT NULL,
+      FOREIGN KEY (category_id) REFERENCES group3_categories(id)
+    );
+  `;
+
+  // Picture sources for each category
+  const categoryPictures = [
+    { src: "https://images.pexels.com/photos/1721096/pexels-photo-1721096.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", categoryName: "Candles" },
+    { src: "https://images.pexels.com/photos/15871491/pexels-photo-15871491/free-photo-of-wedding-ring-with-a-diamond.jpeg", categoryName: "Jewelry" },
+    { src: "https://images.pexels.com/photos/3094035/pexels-photo-3094035.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", categoryName: "Pottery" },
+    { src: "https://images.pexels.com/photos/3778061/pexels-photo-3778061.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", categoryName: "Textiles" },
+    { src: "https://images.pexels.com/photos/1646953/pexels-photo-1646953.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", categoryName: "Paintings" },
+    { src: "https://images.pexels.com/photos/3971983/pexels-photo-3971983.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", categoryName: "Music" }
+  ];
+
+  // Fetch categories and their IDs
+  const categories = await client.sql`SELECT id, name FROM group3_categories;`;
+  const categoryMap = categories.rows.reduce((map, category) => {
+    map[category.name] = category.id;
+    return map;
+  }, {});
+
+  // Insert pictures
+  const createdPictures = await Promise.all(categoryPictures.map(async ({ src, categoryName }) => {
+    const categoryId = categoryMap[categoryName];
+    if (categoryId) {
+      const result = await client.sql`
+        INSERT INTO group3_category_pictures (src, category_id)
+        VALUES (${src}, ${categoryId})
+        RETURNING *;
+      `;
+      const [insertedPicture] = result.rows;
+      console.log(`    - Created category picture: ${insertedPicture.category_id}`);
+      return insertedPicture;
+    } else {
+      console.error(`    - Category not found: ${categoryName}`);
+      return null;
+    }
+  }));
+
+  return createdPictures.filter(picture => picture !== null);
+};
+
 
 const seedUsers = async (client) => {
   console.log("  Seeding Users");
@@ -292,6 +346,7 @@ const main = async () => {
   try {
     await cleanupOldData(client);
     await seedCategories(client);
+    await seedCategoryPictures(client);
     await seedUsers(client);
     
     await seedProducts(client);

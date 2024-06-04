@@ -2,11 +2,15 @@ import {
   type DBProduct,
   type DBProductImage,
   type DBUser,
+  type DBCategory,
+  type DBCategoryPicture,
   type DataBase,
   type Product,
   type ProductImage,
   type User,
   DBTableNames,
+  type Category,
+  type CategoryPicture,
   type Review,
   type DBReview,
   type IQueryBuilder,
@@ -329,6 +333,57 @@ export const getProduct = async (id: DBProduct["id"]): Promise<Product> => {
   if (!products.length) throw new Error(`Product not found for id: ${id}`);
   return products[0];
 }
+
+export const getRandomProducts = async (): Promise<Product[]> => {
+  // Fetch product ids from db
+  const productIdsResults = await db()
+    .selectFrom(DBTableNames.Products)
+    .select('id')
+    .execute();
+  
+  // Extract product ids from result
+  const productIds = productIdsResults.map(result => result.id);
+  
+  // Randomize productIDs
+  const shuffledProductIds = productIds.sort(() => 0.5 - Math.random());
+  const randomProductIds = shuffledProductIds.slice(0, 3);
+  
+  // Fetch each random product by id
+  const randomProductsPromises = randomProductIds.map(id => getProduct(id));
+  const randomProducts = await Promise.all(randomProductsPromises);
+  
+  return randomProducts;
+}
+
+const mapDbCategoryToCategory = (dbCategory: DBCategory, pictureSrc: string | null): Category => ({
+  id: dbCategory.id.toString(),
+  name: dbCategory.name,
+  pictureSrc,
+});
+
+export const getCategoriesWithPictures = async (): Promise<Category[]> => {
+  const categoriesResults = await db()
+    .selectFrom(DBTableNames.Categories)
+    .selectAll()
+    .execute();
+
+  const categoryPicturesResults = await db()
+    .selectFrom(DBTableNames.CategoryPictures)
+    .select(['category_id', 'src'])
+    .execute();
+
+  // Join pictures to categories
+  const categoryPicturesMap = categoryPicturesResults.reduce((map, picture) => {
+    map[picture.category_id] = picture.src;
+    return map;
+  }, {} as Record<string, string>);
+
+  const categoriesWithPictures = categoriesResults.map(dbCategory => 
+    mapDbCategoryToCategory(dbCategory, categoryPicturesMap[dbCategory.id] || null)
+  );
+
+  return categoriesWithPictures;
+};
 
 export const updateProfileSchema = z.object({
   firstName: z.string().trim().min(3, { message: "First name must be 3 or more characters long" }),
