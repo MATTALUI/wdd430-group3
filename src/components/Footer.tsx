@@ -10,11 +10,11 @@ export default function Footer() {
             <p className="mb-2">Contact Information:</p>
             <div className="flex items-center mb-1">
               <FaPhone className="mr-2" />
-              <span>+1 (123) 456-7890</span>
+              <span>+1 (123) 555-1234</span>
             </div>
             <div className="flex items-center mb-1">
               <FaEnvelope className="mr-2" />
-              <span>info@theartisans.com</span>
+              <span>info[@example.com]</span>
             </div>
             <div className="flex items-center">
               <FaMapMarkerAlt className="mr-2" />
