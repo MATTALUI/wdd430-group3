@@ -2,6 +2,8 @@
 import { useCallback, useState } from "react";
 import SideNav from "./SideNav";
 import { GiHamburgerMenu } from "react-icons/gi";
+import logoImage from "../../public/images/logo-bg.png";
+import Image from 'next/image';
 
 export default function Navbar() {
   const [sidenavOpen, setSidenavOpen] = useState(false);
@@ -12,13 +14,18 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-primary p-4">
-        <button
-          className="hover:bg-red-900 text-gray-100 p-2 rounded-sm border-red-900 transition-all"
-          onClick={toggleSidenav}
-        >
-          <GiHamburgerMenu />
-        </button>
+      <nav className="bg-primary p-4 flex justify-between items-center">
+        <div>
+          <button
+            className="hover:bg-red-900 text-gray-100 p-2 rounded-sm border-red-900 transition-all"
+            onClick={toggleSidenav}
+          >
+            <GiHamburgerMenu />
+          </button>
+        </div>
+        <div>
+          <Image src={logoImage} alt="The Artisans" width={75} height={25} />
+        </div>
       </nav>
       <SideNav
         open={sidenavOpen}

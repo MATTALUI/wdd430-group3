@@ -30,8 +30,8 @@ export default async function ProductList({
           </div>
           <div className="flex-4 ps-2">
             <div className="flex">
-              <span className="flex-4 font-bold">{product.name}</span>
-              <span className="ps-2 flex-1">${(Math.random() * 10).toFixed(2)}</span>
+              <span className="flex-4 text-primary font-bold">{product.name}</span>
+              <span className="ps-2 flex-1">$ {product.price.toFixed(2)}</span>
             </div>
             <div className="text-xs">Seller name here</div>
             <RatingStars
