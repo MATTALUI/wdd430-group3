@@ -364,7 +364,7 @@ const mapDbCategoryToCategory = (dbCategory: DBCategory, pictureSrc: string | nu
 export const getCategoriesWithPictures = async (): Promise<Category[]> => {
   const categoriesResults = await db()
     .selectFrom(DBTableNames.Categories)
-    .select(['id', 'name'])
+    .selectAll()
     .execute();
 
   const categoryPicturesResults = await db()
