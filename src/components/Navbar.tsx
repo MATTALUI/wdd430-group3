@@ -19,6 +19,7 @@ export default function Navbar() {
           <button
             className="hover:bg-red-900 text-gray-100 p-2 rounded-sm border-red-900 transition-all"
             onClick={toggleSidenav}
+            aria-label="Menu"
           >
             <GiHamburgerMenu />
           </button>
