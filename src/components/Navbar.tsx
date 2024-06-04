@@ -30,7 +30,7 @@ export default function Navbar() {
             alt="Handcrafted Haven"
             placeholder="blur"
             style={{
-              width: '200px',
+              width: '220px',
               height: 'auto'}}
             />
         </div>
