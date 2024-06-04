@@ -12,7 +12,7 @@ export default async function CategoriesMenu(){
                     return (
                         <Link 
                             key={cat.id}
-                            href="#" 
+                            href={`/products?category_id=${cat.id}`}
                             className="block text-center mb-5 relative"
                         >
                             <img
