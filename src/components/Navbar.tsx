@@ -2,7 +2,7 @@
 import { useCallback, useState } from "react";
 import SideNav from "./SideNav";
 import { GiHamburgerMenu } from "react-icons/gi";
-import logoImage from "../../public/images/logo-bg.png";
+import logoImage from "../../public/images/logo-hh.png";
 import Image from 'next/image';
 
 export default function Navbar() {
@@ -27,10 +27,10 @@ export default function Navbar() {
         <div>
         <Image 
             src={logoImage} 
-            alt="The Artisans"
+            alt="Handcrafted Haven"
             placeholder="blur"
             style={{
-              width: '75px',
+              width: '220px',
               height: 'auto'}}
             />
         </div>
