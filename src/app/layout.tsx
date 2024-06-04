@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     url: "https://wdd430-group3.vercel.app",
     siteName: "Handcrafted Haven",
   },
+  icons: {
+    icon: "/images/favicon.png",
+  },
 };
 
 export default function RootLayout({
