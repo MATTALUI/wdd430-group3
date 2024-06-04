@@ -27,13 +27,14 @@ export default function Navbar() {
         <div>
         <Image 
             src={logoImage} 
-            alt="The Artisans"
+            alt=""
             placeholder="blur"
             style={{
               width: '75px',
               height: 'auto'}}
             />
         </div>
+        <h1 className="invisible">The Artisans</h1>
       </nav>
       <SideNav
         open={sidenavOpen}
