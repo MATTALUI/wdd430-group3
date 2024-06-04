@@ -23,18 +23,26 @@ export default function Footer() {
           </div>
           <div>
             <p className="mb-2">Connect with Us:</p>
-            <div className="flex">
-              <a href="https://www.facebook.com/example" target="_blank" className="mr-2">
-                <FaFacebook />
+            <div className="flex mt-4 mb-4 ml-4 mr-4">
+              <a href="https://www.facebook.com/example" target="_blank" className="mr-4">
+                <FaFacebook 
+                 size={20}
+                />
               </a>
-              <a href="https://www.twitter.com/example" target="_blank" className="mr-2">
-                <FaXTwitter />
+              <a href="https://www.twitter.com/example" target="_blank" className="mr-4">
+                <FaXTwitter 
+                  size={20}
+                />
               </a>
-              <a href="https://www.instagram.com/example" target="_blank" className="mr-2">
-                <FaInstagram />
+              <a href="https://www.instagram.com/example" target="_blank" className="mr-4">
+                <FaInstagram 
+                  size={20}
+                />
               </a>
-              <a href="https://www.linkedin.com/company/example" target="_blank">
-                <FaLinkedin />
+              <a href="https://www.linkedin.com/company/example" target="_blank" className="mr-4">
+                <FaLinkedin
+                  size={20}
+                />
               </a>
             </div>
           </div>
