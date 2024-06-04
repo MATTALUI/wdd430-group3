@@ -24,7 +24,7 @@ export default function Navbar() {
           </button>
         </div>
         <div>
-          <Image src={logoImage} alt="The Artisans" width={120} height={40} />
+          <Image src={logoImage} alt="The Artisans" width={75} height={25} />
         </div>
       </nav>
       <SideNav
