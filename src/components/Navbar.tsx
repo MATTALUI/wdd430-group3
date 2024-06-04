@@ -34,7 +34,7 @@ export default function Navbar() {
               height: 'auto'}}
             />
         </div>
-        <h1 className="invisible">The Artisans</h1>
+        <h1 className="invisible">Handcrafted Haven</h1>
       </nav>
       <SideNav
         open={sidenavOpen}
