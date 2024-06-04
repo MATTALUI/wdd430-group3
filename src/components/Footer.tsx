@@ -51,7 +51,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <p className="text-center mt-4">© 2024 The Artisans. All rights reserved.</p>
+        <p className="text-center mt-4">© 2024 Handcrafted Haven. All rights reserved.</p>
       </div>
     </footer>
   );
