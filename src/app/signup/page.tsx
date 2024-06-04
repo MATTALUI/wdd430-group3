@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useState, useCallback } from "react";
 import { processFormData } from "@/lib/actions";
 import { z } from 'zod';
-//import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
+  const router = useRouter();
   
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  //const router = useRouter();
 
   // State variables to store input field values
   const [firstName, setFirstName] = useState("");
@@ -40,8 +40,7 @@ export default function SignupPage() {
       password,
       repeatPassword,
     };
-    //const router = useRouter();
-    //console.log(router.pathname);
+    
     // Validate the form data using the Zod schema
     try {
       formDataSchema.parse(formData);
@@ -54,7 +53,7 @@ export default function SignupPage() {
       } else {
         setError('');
         setSuccessMessage('User created successfully');
-        //setTimeout(() => router.push('/login'), 2000);
+        setTimeout(() => router.push('/login'), 2000);
       }
         
     } catch (error) {
