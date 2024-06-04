@@ -27,7 +27,7 @@ export default async function SellersPage({
   return (
     <div>
       <div className="mb-2">
-        <img
+        <Image
           src={user.profileImage || ""}
           alt="profile picture"
           className="w-full block"
