@@ -3,7 +3,7 @@
 import { signIn } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { AuthError } from "next-auth";
-import { createUser, createReview } from "@/lib/data";
+import { createUser, createReview, updateUser } from "@/lib/data";
 import { mapFormDataToDBUser, mapFormDataToDBReview } from "@/lib/data";
 import { DBReview } from "@/types";
 import { revalidatePath } from "next/cache";
@@ -33,11 +33,20 @@ export async function processFormData (formData: any)  {
   try {
     const dbUser = await mapFormDataToDBUser(formData);
     const data = await createUser(dbUser);
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error processing form data:", error);
     throw new Error("Failed to process form data");
+  }
+};
+
+export async function updateProfileFormData (id: string, formData: any)  {
+  try {
+    const res = await updateUser(id,formData);
+    return res;
+  } catch (error) {
+    console.error('Error processing form data:', error);
+    throw new Error('Failed to process form data');
   }
 };
 

@@ -16,6 +16,7 @@ import { type Kysely, sql, Generated } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
 import bcrypt from 'bcrypt';
 import { omit, pick } from "lodash";
+import { z } from 'zod';
 
 type UserFilter = Partial<Pick<User, "id" | "email">>;
 
@@ -81,6 +82,38 @@ export async function createUser(userData: DBUser) {
   }
 }
 
+export async function updateUser(userId: string, userData: User) {
+  try {
+    const updatedAt = new Date();
+
+    const updatedFields: Partial<Omit<DBUser, 'id' | 'created_at'>> = {
+      email: userData.email,
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+      description: userData.description,
+      profile_image: userData.profileImage,
+      updated_at: updatedAt,
+    };
+
+    // Update user in the database
+    const result = await db()
+      .updateTable(DBTableNames.Users)
+      .set(updatedFields as any)
+      .where('id', '=', userId)
+      .returning(['id', 'first_name', 'last_name', 'email', 'profile_image'])
+      .executeTakeFirstOrThrow();
+
+    return { status: true, message: 'Operation successful', updatedUser: result };
+  
+  } catch (error: any) {
+    if (error.code === '23505') {
+      return { message: 'Email is already registered', error: error.detail };
+    } else {
+      return { status: false, message: 'An error occurred', updatedUser: null };
+    }
+  }
+}
+
 export const mapFormDataToDBReview = async (formData: any): Promise<DBReview> => {
   const { stars, text, product_id, reviewer_id } = formData;
 
@@ -127,7 +160,7 @@ const mapDbUserToUser = (dbUser: DBUser): User => ({
   description: dbUser.description,
   profileImage: dbUser.profile_image,
   createdAt: dbUser.created_at as Date,
-  updatedAt: dbUser.created_at as Date,
+  updatedAt: dbUser.updated_at as Date,
 });
 
 const mapDbProductToProduct = (dbProduct: DBProduct): Product => ({
@@ -296,3 +329,11 @@ export const getProduct = async (id: DBProduct["id"]): Promise<Product> => {
   if (!products.length) throw new Error(`Product not found for id: ${id}`);
   return products[0];
 }
+
+export const updateProfileSchema = z.object({
+  firstName: z.string().trim().min(3, { message: "First name must be 3 or more characters long" }),
+  lastName: z.string().trim().min(3, { message: "Last name must be 3 or more characters long" }),
+  email: z.string().email({ message: "Invalid email format" }),
+  description: z.string().optional(),
+  profileImage: z.string().optional(),
+});
