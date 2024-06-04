@@ -163,7 +163,7 @@ export default function ProductForm( {} ) {
                 <div className="absolute bottom-0 flex items-center justify-center">
                   {
                     image.map((item, index:number) => (
-                      <div className={clsx("w-2.5 h-2.5 m-1.5 bg-white rounded-sm cursor-pointer focus:outline-none focus:ring", current===index && "bg-primary")}
+                      <div key={index} className={clsx("w-2.5 h-2.5 m-1.5 bg-white rounded-sm cursor-pointer focus:outline-none focus:ring", current===index && "bg-primary")}
                       onClick={() => setCurrent(index)}></div>
                     ))
                   }
@@ -182,7 +182,7 @@ export default function ProductForm( {} ) {
                 <div className="w-11/12 flex items-center justify-start">
                   {
                     selecta.map((item, index:number) => (
-                      <div className="w-24 h-24 bg-light-trans mr-2.5 rounded flex items-center justify-center">
+                      <div key={index} className="w-24 h-24 bg-light-trans mr-2.5 rounded flex items-center justify-center">
                         {
                           index + 1 > image.length
                             ? <div>
