@@ -27,21 +27,25 @@ export default function Footer() {
               <a href="https://www.facebook.com/example" target="_blank" className="mr-4">
                 <FaFacebook 
                  size={20}
+                 aria-label='Facebook'
                 />
               </a>
               <a href="https://www.twitter.com/example" target="_blank" className="mr-4">
                 <FaXTwitter 
                   size={20}
+                  aria-label='Twitter'
                 />
               </a>
               <a href="https://www.instagram.com/example" target="_blank" className="mr-4">
                 <FaInstagram 
                   size={20}
+                  aria-label='Instagram'
                 />
               </a>
               <a href="https://www.linkedin.com/company/example" target="_blank" className="mr-4">
                 <FaLinkedin
                   size={20}
+                  aria-label='LinkedIn'
                 />
               </a>
             </div>
