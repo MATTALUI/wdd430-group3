@@ -116,5 +116,6 @@ export interface IQueryBuilder<T> {
     key: keyof T;
     order: SortOrders;
     limit: number;
+    category: string;
   }>;
 }

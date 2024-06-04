@@ -24,7 +24,7 @@ interface IProductsPageProps {
     key: keyof DBProduct;
     order: SortOrders;
     limit: number;
-    category: string[];
+    category: string;
   }>;
 }
 
