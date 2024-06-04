@@ -20,5 +20,10 @@ const config: Config = {
     },
   },
   plugins: [],
+  variants: {
+    extend: {
+      backgroundColor: ["active"],
+    }
+  }
 };
 export default config;
