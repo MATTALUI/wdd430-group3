@@ -15,6 +15,7 @@ const sortParams = [
   "key",
   "order",
   "limit",
+  "category",
 ];
 interface IProductsPageProps {
   searchParams?: Partial<{
@@ -23,6 +24,7 @@ interface IProductsPageProps {
     key: keyof DBProduct;
     order: SortOrders;
     limit: number;
+    category: string[];
   }>;
 }
 
