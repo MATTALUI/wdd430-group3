@@ -1,7 +1,9 @@
 import ProductForm from "@/components/CreateProductForm";
+import { getCategoriesWithPictures } from "@/lib/data";
 
-export default function CreateProducts() {
+export default async function CreateProducts() {
+  const categories = await getCategoriesWithPictures();
   return (
-    <ProductForm />
+    <ProductForm categories={categories}/>
   );
 }
