@@ -2,9 +2,9 @@ import RatingStars from "@/components/RatingStars";
 import { getProduct } from "@/lib/data";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import ReviewsForm from '@/components/ReviewsForm';
-import { EditProduct } from "@/components/Buttons";
 import Image from "next/image";
 import { Metadata } from "next";
+import { EditProduct } from "@/components/EditProductButton";
 import Link from "next/link";
 
 interface IProductPageProps {
@@ -16,10 +16,10 @@ export default async function ProductPage({
   params: { id: productId },
 }: IProductPageProps) {
   const product = await getProduct(productId);
-  console.log(product)
+
   return (
     <div>
-      <EditProduct id={productId} />
+      <EditProduct id={productId} sellerId={product.seller.id} />
       <div className="w-full flex-wrap items-center justify-center justify-items-center object-contain">
         {product.images.length > 0 ? (
           product.images.slice(0, 1).map(img => (
