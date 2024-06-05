@@ -212,7 +212,6 @@ const seedProducts = async (client) => {
       descripion: "Immerse yourself in the exquisite fragrance of Cherry Blossom, where each delicate note unveils a symphony of floral opulence, transforming any space into a sanctuary of refined tranquility and sophistication. Let the essence of Cherry Blossom elevate your surroundings with its subtle yet captivating allure, inviting you to luxuriate in moments of sheer indulgence and understated elegance.",
       sellerIndex: 1,
       images: [
-        "https://assets.myntassets.com/h_200,w_200,c_fill,g_auto/h_1440,q_100,w_1080/v1/assets/images/7736144/2018/11/3/a2cb9b3f-b76d-491c-a1bb-42ed3d42d5211541240984131-Archies-Pink-Scented-Candle-7011541240983930-1.jpg",
         "https://www.godsavethepoints.com/wp-content/uploads/2018/09/57911622_m.jpg",
       ],
     },
