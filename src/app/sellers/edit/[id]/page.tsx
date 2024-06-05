@@ -1,6 +1,7 @@
 import React from 'react';
 import { getUser } from '@/lib/data';
 import UserProfileClient from '@/components/UserProfileClient';
+import { Metadata } from 'next';
 
 interface Props {
     params: {
@@ -16,3 +17,7 @@ const UserProfilePage = async ({ params }: Props) => {
 };
 
 export default UserProfilePage;
+
+export const metadata: Metadata = {
+    title: 'Edit Profile',
+};

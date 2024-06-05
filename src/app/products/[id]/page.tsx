@@ -4,6 +4,7 @@ import { FaRegStar, FaStar } from "react-icons/fa";
 import ReviewsForm from '@/components/ReviewsForm';
 import { EditProduct } from "@/components/Buttons";
 import Image from "next/image";
+import { Metadata } from "next";
 
 interface IProductPageProps {
   params: {
@@ -73,3 +74,7 @@ export default async function ProductPage({
     </div>
   );
 }
+
+export const metadata: Metadata = {
+  title: 'Product Details',
+};

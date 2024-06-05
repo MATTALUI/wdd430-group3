@@ -5,6 +5,7 @@ import { DBProduct, SortOrders } from "@/types";
 import { pick } from "lodash";
 import { Suspense } from "react";
 import { CreateProduct } from "@/components/Buttons";
+import { Metadata } from "next";
 
 const filterParams = [
   'seller_id',
@@ -44,3 +45,7 @@ export default async function ProductsPage({
     </div>
   );
 }
+
+export const metadata: Metadata = {
+  title: 'Products',
+};

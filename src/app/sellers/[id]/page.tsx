@@ -2,6 +2,7 @@ import ProductList from "@/components/ProductList";
 import ProductListSkeletons from "@/components/ProductListSkeletons";
 import { getUser } from "@/lib/data";
 import { SortOrders } from "@/types";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -79,3 +80,7 @@ export default async function SellersPage({
     </div>
   );
 }
+
+export const metadata: Metadata = {
+  title: 'Seller Profile',
+};
