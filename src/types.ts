@@ -65,6 +65,11 @@ export type Product = Timestamped & {
   seller: Pick<User, "id" | "firstName" | "lastName" | "email">;
   rating: number;
 }
+export type Categories = {
+  id: ID;
+  name: string;
+}
+
 export type DBProduct =
   Pick<Product, "name" | "description" | "price"> &
   DBTimestamped &
@@ -80,6 +85,12 @@ export type Review = Timestamped & {
   stars: 1 | 2 | 3 | 4 | 5;
   text: string;
 };
+
+export type DBCategories = {
+  id: ID;
+  name: string;
+};
+
 export type DBReview =
   Pick<Review, "stars" | "text"> &
   DBTimestamped &
@@ -94,6 +105,7 @@ export enum DBTableNames {
   Products = "group3_products",
   ProductImages = "group3_product_images",
   Reviews = "group3_reviews",
+  Categories = "group3_categories",
 };
 
 export type DataBase = {
@@ -101,6 +113,7 @@ export type DataBase = {
   [DBTableNames.Products]: DBProduct;
   [DBTableNames.ProductImages]: DBProductImage;
   [DBTableNames.Reviews]: DBReview;
+  [DBTableNames.Categories]: DBCategories;
 };
 
 export enum SortOrders {

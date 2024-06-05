@@ -5,6 +5,8 @@ import { DBProduct, SortOrders } from "@/types";
 import { pick } from "lodash";
 import { Suspense } from "react";
 import { CreateProduct } from "@/components/Buttons";
+import { getCategories } from "@/lib/data";
+
 
 const filterParams = [
   'seller_id',
@@ -15,7 +17,6 @@ const sortParams = [
   "key",
   "order",
   "limit",
-  "category",
 ];
 interface IProductsPageProps {
   searchParams?: Partial<{
@@ -24,7 +25,6 @@ interface IProductsPageProps {
     key: keyof DBProduct;
     order: SortOrders;
     limit: number;
-    category: string;
   }>;
 }
 
@@ -33,11 +33,14 @@ export default async function ProductsPage({
 }:IProductsPageProps) {
   const filter: Partial<DBProduct> = pick(searchParams, filterParams);
   const sort = pick(searchParams, sortParams);
+  const categoryList = await getCategories()
+  console.log(categoryList)
+
 
   return (
     <div>
       <CreateProduct />
-      <ProductsSearch />
+      <ProductsSearch/>
       <div>
         <Suspense fallback={<ProductListSkeletons />}>
           <ProductList filter={filter} sort={sort} />

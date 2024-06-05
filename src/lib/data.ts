@@ -11,6 +11,8 @@ import {
   type DBReview,
   type IQueryBuilder,
   SortOrders,
+  DBCategories,
+  Categories,
 } from "@/types";
 import { type Kysely, sql, Generated } from "kysely";
 import { createKysely } from '@vercel/postgres-kysely';
@@ -128,6 +130,11 @@ const mapDbUserToUser = (dbUser: DBUser): User => ({
   profileImage: dbUser.profile_image,
   createdAt: dbUser.created_at as Date,
   updatedAt: dbUser.created_at as Date,
+});
+
+const mapDbCategoryToCatecory = (dbCategory: DBCategories): Categories => ({
+  id: dbCategory.id.toString(),
+  name: dbCategory.name,
 });
 
 const mapDbProductToProduct = (dbProduct: DBProduct): Product => ({
@@ -295,4 +302,16 @@ export const getProduct = async (id: DBProduct["id"]): Promise<Product> => {
   const products = await getProducts({ filter: { id } });
   if (!products.length) throw new Error(`Product not found for id: ${id}`);
   return products[0];
+}
+
+export const getCategories = async () => {
+  let categoryQuery = db()
+    .selectFrom(DBTableNames.Categories)
+    .selectAll();
+
+  const categoryResults = await categoryQuery.execute();
+
+  const category = categoryResults.map(mapDbCategoryToCatecory);
+
+  return category;
 }

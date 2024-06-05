@@ -1,4 +1,4 @@
-import { getProducts } from "@/lib/data";
+import { getProducts, getCategories } from "@/lib/data";
 import type { DBProduct, IQueryBuilder } from "@/types";
 import Link from "next/link";
 import { FaRegStar, FaStar } from "react-icons/fa";
@@ -10,23 +10,10 @@ export default async function ProductList({
   sort,
 }: IQueryBuilder<DBProduct> = {}) {
   const products = await getProducts({ filter, sort });
-  const category = sort?.category
-  if(category) {
-    if(category === 'empty') {
-      products.length = 0;
-    } else {
-      for(let i = 0; i < products.length; i++) {
-        if(!category.includes(products[i].id)) {
-          delete products[i];
-        }
-    }
-    }
-    
-  }
 
   return (
     <div className="py-4">
-      {products.length === 0 && (
+      {!products.length && (
         <div className="bg-sky-100 border border-sky-400 text-sky-700 px-4 py-3 rounded relative" role="alert">
           <strong className="font-bold">No Products</strong>
           <span className="block sm:inline">{`Don't`} see what {`you're`} looking for? Try browsing <Link href="/products" className="font-bold underline">all products</Link> instead!</span>
