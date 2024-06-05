@@ -1,7 +1,6 @@
 import { getProducts } from "@/lib/data";
 import type { DBProduct, IQueryBuilder } from "@/types";
 import Link from "next/link";
-import { FaRegStar, FaStar } from "react-icons/fa";
 import truncate from "lodash/truncate";
 import RatingStars from "./RatingStars";
 
@@ -26,14 +25,21 @@ export default async function ProductList({
           className="my-2 flex p-2 bg-gray-50 rounded-md hover:opacity-75 shadow"
         >
           <div className="flex-2">
-            <img src={product.images[0]?.src} alt="product image" />
+            {product.images.length > 0 ? (
+              <img src={product.images[0]?.src} alt="product image" />
+            ) : (
+              <div className="aspect-square w-20 bg-primary rounded opacity-75 text-center flex items-center">
+                No Image Available
+              </div>
+            )}
+
           </div>
           <div className="flex-4 ps-2">
             <div className="flex">
               <span className="flex-4 text-primary font-bold">{product.name}</span>
-              <span className="ps-2 flex-1">$ {product.price.toFixed(2)}</span>
+              <span className="ps-2 flex-1">${product.price.toFixed(2)}</span>
             </div>
-            <div className="text-xs">Seller name here</div>
+            <div className="text-xs">{product.seller.firstName} {product.seller.lastName}</div>
             <RatingStars
               defaultValue={product.rating}
               readonly

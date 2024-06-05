@@ -89,6 +89,8 @@ export async function createProduct( formData: FormData ) {
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
+    console.error("something bad happened!")
+    console.error(validatedFields.error.flatten().fieldErrors)
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Missing fields, failed to Create Product.",
@@ -103,7 +105,7 @@ export async function createProduct( formData: FormData ) {
     // Add product to DB:
     const createdProduct = await sql`
       INSERT INTO group3_products (seller_id, name, price, description)
-      VALUES (${seller_id}, ${name}, ${price}, ${description})
+      VALUES (${seller_id}, ${name}, ${Math.round(+price)}, ${description})
       RETURNING *;
     `;
 

@@ -4,7 +4,7 @@ import ProductsSearch from "@/components/ProductsSearch";
 import { DBProduct, SortOrders } from "@/types";
 import { pick } from "lodash";
 import { Suspense } from "react";
-import { CreateProduct } from "@/components/Buttons";
+import CreateProduct from "@/components/CreateProductButton";
 
 const filterParams = [
   'seller_id',

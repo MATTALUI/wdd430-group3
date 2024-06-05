@@ -1,3 +1,4 @@
+import CreateProductButton from "@/components/CreateProductButton";
 import ProductList from "@/components/ProductList";
 import ProductListSkeletons from "@/components/ProductListSkeletons";
 import { getUser } from "@/lib/data";
@@ -37,7 +38,7 @@ export default async function SellersPage({
         {user.firstName} {user.lastName}
       </div>
       <div className="mb-2 text-sm">
-        <Link href={`/sellers/edit/${user.id}`} className="text-blue-600"> Edit</Link>
+        <Link href={`/sellers/edit/${user.id}`} className="text-blue-600">Edit Profile</Link>
       </div>
       {profileUpdated && (
         <div className="mb-4 text-green-500">Profile updated successfully!</div>
@@ -49,6 +50,7 @@ export default async function SellersPage({
         </div>
       </div>
       <div>
+        <CreateProductButton sellerId={id} />
         <div className="flex justify-between">
           <div className="font-bold">Recent Products</div>
           <Link
