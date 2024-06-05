@@ -74,7 +74,7 @@ const ProductSchema = z.object({
   price: z.coerce
       .number()
       .gt(0, { message: "The price must be greater than $0." }),
-  description: z.string().min(10, "Description must be at least 10 characters."),
+  description: z.string(),
   images: z.string(),
 });
 
@@ -93,6 +93,8 @@ export async function createProduct( formData: FormData ) {
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
+    console.error("something bad happened!")
+    console.error(validatedFields.error.flatten().fieldErrors)
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Missing Fields. Failed to Create Product.",
@@ -106,7 +108,7 @@ export async function createProduct( formData: FormData ) {
     // Add product to DB:
     const createdProduct = await sql`
       INSERT INTO group3_products (seller_id, name, price, description)
-      VALUES (${seller_id}, ${name}, ${price}, ${description})
+      VALUES (${seller_id}, ${name}, ${Math.round(+price)}, ${description})
       RETURNING *;
     `;
 
@@ -122,6 +124,7 @@ export async function createProduct( formData: FormData ) {
     `;
     });
   } catch (error) {
+    console.error("database error", error);
     return {
         message: "Database Error: Failed to Create Product.",
       };

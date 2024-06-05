@@ -14,7 +14,7 @@ export default function Footer() {
             </div>
             <div className="flex items-center mb-1">
               <FaEnvelope className="mr-2" />
-              <span>info[@example.com]</span>
+              <span>info@example.com</span>
             </div>
             <div className="flex items-center">
               <FaMapMarkerAlt className="mr-2" />

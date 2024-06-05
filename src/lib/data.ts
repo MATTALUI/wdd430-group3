@@ -3,14 +3,12 @@ import {
   type DBProductImage,
   type DBUser,
   type DBCategory,
-  type DBCategoryPicture,
   type DataBase,
   type Product,
   type ProductImage,
   type User,
   DBTableNames,
   type Category,
-  type CategoryPicture,
   type Review,
   type DBReview,
   type IQueryBuilder,
@@ -196,10 +194,11 @@ const mapDbProductImageToProductImage = (
 });
 
 const mapDbReviewToReview = (
-  dbReview: DBReview
+  dbReview: any
 ): Review => ({
   id: dbReview.id.toString(),
   reviewerId: dbReview.reviewer_id,
+  reviewerName: `${dbReview.first_name} ${dbReview.last_name}`,
   productId: dbReview.product_id,
   stars: dbReview.stars,
   text: dbReview.text,
@@ -282,6 +281,7 @@ export const getProducts = async ({
       .where('product_id', 'in', productIds)
       .execute(),
     db().selectFrom(DBTableNames.Reviews)
+      .fullJoin(DBTableNames.Users, `${DBTableNames.Users}.id`, `${DBTableNames.Reviews}.reviewer_id`)
       .selectAll()
       .where('product_id', 'in', productIds)
       .execute(),

@@ -38,7 +38,7 @@ export default async function SellersPage({
         {user.firstName} {user.lastName}
       </div>
       <div className="mb-2 text-sm">
-        <Link href={`/sellers/edit/${user.id}`} className="text-blue-600"> Edit</Link>
+        <Link href={`/sellers/edit/${user.id}`} className="text-blue-600">Edit Profile</Link>
       </div>
       {profileUpdated && (
         <div className="mb-4 text-green-500">Profile updated successfully!</div>

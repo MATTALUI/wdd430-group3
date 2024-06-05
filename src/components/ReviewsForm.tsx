@@ -13,9 +13,16 @@ const formDataSchema = z.object({
     text: z.string().trim().max(1000, { message: 'Must be less than 1000 characters' }),
 });
 
-export default function ReviewsForm() {
+interface IReviewsFormProps {
+    reviewers: string[]
+}
+
+export default function ReviewsForm({
+    reviewers
+}:IReviewsFormProps) {
     const { status, data } = useSession();
     const isLoggedIn = status === "authenticated";
+    const userId = data?.user?.id;
 
     // State variables to store input field values
     const [stars, setStars] = useState("5");
@@ -23,6 +30,7 @@ export default function ReviewsForm() {
 
 
     const handleReview = useCallback(async () => {
+        if (!text) return;
         const product_id = window.location.pathname.substring(10);
 
         const reviewer_id = data?.user?.id;
@@ -56,6 +64,7 @@ export default function ReviewsForm() {
         setStars(rating.toString())
     }, [setStars]);
 
+    if (reviewers.includes(userId || "")) return null;
     return (
         <div className="w-full max-w-xs">
             {isLoggedIn && <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4">

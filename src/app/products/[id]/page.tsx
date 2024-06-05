@@ -52,7 +52,7 @@ export default async function ProductPage({
       </div>
       <div className="mt-4">
         <h2>Reviews</h2>
-        <ReviewsForm />
+        <ReviewsForm reviewers={product.reviews.map(r => r.reviewerId)} />
         {product.reviews.map((review) => (
           <div
             key={review.id}
@@ -62,7 +62,9 @@ export default async function ProductPage({
               <img src={"https://picsum.photos/300/300"} alt="seller profile pic" />
             </div>
             <div className="flex-1 ps-2">
-              <div>{`Reviewer Name`}</div>
+              <div>
+                <Link className="text-orange-300" href={`/sellers/${review.reviewerId}`}>{review.reviewerName}</Link>
+              </div>
               <RatingStars
                 defaultValue={review.stars}
                 readonly
