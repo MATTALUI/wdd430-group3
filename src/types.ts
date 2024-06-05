@@ -76,6 +76,7 @@ export type DBProduct =
 export type Review = Timestamped & {
   id: ID;
   reviewerId: User["id"];
+  reviewerName: string;
   productId: Product["id"];
   stars: 1 | 2 | 3 | 4 | 5;
   text: string;
