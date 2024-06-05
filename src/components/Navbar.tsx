@@ -4,6 +4,7 @@ import SideNav from "./SideNav";
 import { GiHamburgerMenu } from "react-icons/gi";
 import logoImage from "../../public/images/logo-hh.png";
 import Image from 'next/image';
+import Link from "next/link";
 
 export default function Navbar() {
   const [sidenavOpen, setSidenavOpen] = useState(false);
@@ -25,14 +26,18 @@ export default function Navbar() {
           </button>
         </div>
         <div>
-        <Image 
-            src={logoImage} 
-            alt=""
-            placeholder="blur"
-            style={{
-              width: '220px',
-              height: 'auto'}}
+          <Link href="/">
+            <Image
+              src={logoImage}
+              alt=""
+              placeholder="blur"
+              style={{
+                width: '220px',
+                height: 'auto'
+              }}
+
             />
+          </Link>
         </div>
         <h1 className="invisible">Handcrafted Haven</h1>
       </nav>
