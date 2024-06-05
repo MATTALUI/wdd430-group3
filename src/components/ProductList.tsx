@@ -1,7 +1,6 @@
 import { getProducts } from "@/lib/data";
 import type { DBProduct, IQueryBuilder } from "@/types";
 import Link from "next/link";
-import { FaRegStar, FaStar } from "react-icons/fa";
 import truncate from "lodash/truncate";
 import RatingStars from "./RatingStars";
 
