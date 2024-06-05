@@ -6,6 +6,7 @@ import { pick } from "lodash";
 import { Suspense } from "react";
 import { CreateProduct } from "@/components/Buttons";
 import { Metadata } from "next";
+import CreateProduct from "@/components/CreateProductButton";
 
 const filterParams = [
   'seller_id',

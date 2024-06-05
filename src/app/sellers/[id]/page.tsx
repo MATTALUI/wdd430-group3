@@ -1,3 +1,4 @@
+import CreateProductButton from "@/components/CreateProductButton";
 import ProductList from "@/components/ProductList";
 import ProductListSkeletons from "@/components/ProductListSkeletons";
 import { getUser } from "@/lib/data";
@@ -50,6 +51,7 @@ export default async function SellersPage({
         </div>
       </div>
       <div>
+        <CreateProductButton sellerId={id} />
         <div className="flex justify-between">
           <div className="font-bold">Recent Products</div>
           <Link

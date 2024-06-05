@@ -5,6 +5,7 @@ import ReviewsForm from '@/components/ReviewsForm';
 import { EditProduct } from "@/components/Buttons";
 import Image from "next/image";
 import { Metadata } from "next";
+import Link from "next/link";
 
 interface IProductPageProps {
   params: {
@@ -15,21 +16,26 @@ export default async function ProductPage({
   params: { id: productId },
 }: IProductPageProps) {
   const product = await getProduct(productId);
-
+  console.log(product)
   return (
     <div>
-      <EditProduct id={productId}/>
+      <EditProduct id={productId} />
       <div className="w-full flex-wrap items-center justify-center justify-items-center object-contain">
-        {product.images.length > 0 && (
-          product.images.map(img => (
-            <Image className="p-2" width={250} height={250} key={img.id} src={img.src} alt="product image" />
+        {product.images.length > 0 ? (
+          product.images.slice(0, 1).map(img => (
+            <img className="p-2" width={250} height={250} key={img.id} src={img.src} alt="product image" />
           ))
+        ) : (
+          <div className="aspect-square w-full bg-primary rounded opacity-75 text-center flex items-center justify-center">
+            No Image Available
+          </div>
         )}
       </div>
       <div className="flex font-bold justify-between">
         <h1 className="text-primary text-xl">{product.name}</h1>
         <span >USD$ {product.price}</span>
       </div>
+      <div>By <Link className="text-orange-300" href={`/sellers/${product.seller.id}`}>{product.seller.firstName} {product.seller.lastName}</Link></div>
       <RatingStars
         defaultValue={product.rating}
         readonly
