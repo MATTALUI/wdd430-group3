@@ -8,7 +8,6 @@ import Axios from "axios";
 import { DeleteProduct } from "./Buttons";
 import { Product } from "@/types";
 import Image from "next/image";
-import { ProductImage } from "@/types";
 
 export default function ProductForm( { product }: { product: Product } ) {
   const updateProductWithId = editProduct.bind(null, product.id);
@@ -21,14 +20,14 @@ export default function ProductForm( { product }: { product: Product } ) {
   const [error, setError] = useState("");
 
   // Initialize state with product images
-  useEffect(() => {
-    if (product && product.images) {
-      const productImages = product.images.map(img => img.src);
-      setImage(productImages);
-      setSelecta(productImages.map((_, index) => `image${index + 1}`));
-      setCurrent(0);
-    }
-  }, [product]);
+  // useEffect(() => {
+  //   if (product && product.images) {
+  //     const productImages = product.images.map(img => img.src);
+  //     setImage(productImages);
+  //     setSelecta(productImages.map((img, index) => `image${index + 1}`));
+  //     setCurrent(0);
+  //   }
+  // }, [product]);
 
 
   const addSelecta = () => {
@@ -164,10 +163,10 @@ export default function ProductForm( { product }: { product: Product } ) {
             />
           </div>
           <div className="mb-4">
-            <label
+            <p
               className="block text-gray-700 text-sm font-bold mb-2"
               >Product Images
-            </label>
+            </p>
           </div>
           <div className="mb-2 flex items-center justify-center">
             <div className="w-full">
@@ -207,7 +206,7 @@ export default function ProductForm( { product }: { product: Product } ) {
                                 style={{display:"none"}} 
                                 onChange={e => onChange(e)}
                                 />
-                                <label htmlFor={`images-${index}`} >
+                                <label htmlFor="images" >
                                   <BiImageAdd className="text-white font-bold size-8 cursor-pointer"/>
                                 </label>
                               </div>
