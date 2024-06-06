@@ -8,8 +8,13 @@ const nextConfig = {
         port: '',
         pathname: '/*',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/dn72ezrxw/image/upload/v1717627095/handcrafted-haven/*',
+      }
     ],
-    domains: ["res.cloudinary.com"],
   },
 };
 

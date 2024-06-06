@@ -147,3 +147,15 @@ export interface IQueryBuilder<T> {
     limit: number;
   }>;
 }
+
+export type State = {
+  errors: {
+    seller_id?: string[];
+    name?: string[];
+    price?: string[];
+    description?: string[];
+    categories?: string[];
+    images?: string[];
+  };
+  message: string | null;
+};

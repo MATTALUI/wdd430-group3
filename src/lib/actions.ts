@@ -59,27 +59,21 @@ export async function processReviewFormData (review: Omit<DBReview, "id">)  {
   }
 };
 
-  // Validate data types with zod:
-
-  const ImagesSchema = z.object({
-    id: z.string(),
-    url: z.string().url()
-  })
-
+// Validate data types with zod:
 const ProductSchema = z.object({
   id: z.string(),
   seller_id: z.string().uuid(),
   name: z.string({
-    invalid_type_error: "Product name cannot be empty!"}).min(1),
+    invalid_type_error: "Product name must be a string."}).min(1, "Product name cannot be empty!"),
   price: z.coerce
       .number()
       .gt(0, { message: "The price must be greater than $0." }),
-  description: z.string(),
+  description: z.string().min(10, "Description must be at least 10 characters."),
+  categories: z.array( z.string().uuid()),
   images: z.string(),
 });
 
 const ProductData = ProductSchema.omit( { id: true } );
-const ImagesUrls = ImagesSchema.omit( { id: true } );
 
 export async function createProduct( formData: FormData ) {
 
@@ -88,8 +82,10 @@ export async function createProduct( formData: FormData ) {
     name: formData.get("name"),
     price: formData.get("price"),
     description: formData.get("description"),
+    categories: formData.getAll("categories"),
     images: formData.get("images")
   });
+  
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
@@ -97,11 +93,12 @@ export async function createProduct( formData: FormData ) {
     console.error(validatedFields.error.flatten().fieldErrors)
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "Missing Fields. Failed to Create Product.",
+      message: "Missing fields, failed to Create Product.",
     };
   }
+
   // Prepare data for insertion into the database
-  const { seller_id, name, price, description, images } = validatedFields.data;
+  const { seller_id, name, price, description, categories, images } = validatedFields.data;
 
   try {
 
@@ -119,16 +116,23 @@ export async function createProduct( formData: FormData ) {
     imagesUrls.forEach(async (url: string) => {
       await sql`
       INSERT INTO group3_product_images (src, product_id)
-      VALUES (${url}, ${pId})
-      RETURNING *;
+      VALUES (${url}, ${pId});
     `;
     });
+ 
+    categories.forEach(async (categoryId: string) => {
+      await sql`
+      INSERT INTO group3_product_categories (product_id, category_id)
+      VALUES (${pId}, ${categoryId});
+    `;
+    });
+
   } catch (error) {
-    console.error("database error", error);
+    console.error("Database Error: ", error);
     return {
         message: "Database Error: Failed to Create Product.",
       };
- }
+  }
   revalidatePath("/products/"); // Clear cache and trigger new request to the server
   redirect("/products"); // Redirect the user back to the /products page
 }
@@ -151,7 +155,6 @@ export async function editProduct(id: string, formData: FormData) {
   }
   // Prepare data for insertion into the database
   const { name, price, description, images } = validatedFields.data;
-  const imagesUrls = JSON.parse(images);
 
   try {
     // Update product in the DB:
@@ -161,7 +164,7 @@ export async function editProduct(id: string, formData: FormData) {
       WHERE id = ${id}
     `;
     // Update images in the DB:
-    // imagesUrls.forEach(async (url: string) => {
+    // images.forEach(async (url: string) => {
     //   await sql`
     //   DELETE group3_product_images
     //   WHERE id = ${id};
@@ -171,6 +174,7 @@ export async function editProduct(id: string, formData: FormData) {
     //   WHERE id = ${id}
     //   `;
     // });
+
   } catch (error) {
     return {
       message: "Database Error: Failed to Update Product.",
