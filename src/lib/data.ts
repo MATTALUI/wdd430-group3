@@ -106,7 +106,7 @@ export async function updateUser(userId: string, userData: User) {
       .executeTakeFirstOrThrow();
 
     return { status: true, message: 'Operation successful', updatedUser: result };
-  
+
   } catch (error: any) {
     if (error.code === '23505') {
       return { message: 'Email is already registered', error: error.detail };
@@ -124,7 +124,7 @@ export const mapFormDataToDBReview = async (formData: any): Promise<DBReview> =>
     stars: stars,
     text: text,
     product_id: product_id,
-    reviewer_id: reviewer_id, 
+    reviewer_id: reviewer_id,
     created_at: new Date(),
     updated_at: new Date(),
   };
@@ -147,7 +147,7 @@ export async function createReview(reviewData: Omit<DBReview, "id">) {
       .returning(['stars', 'text', 'product_id', 'reviewer_id'])
       .executeTakeFirstOrThrow();
 
-    return  result;
+    return result;
   } catch (error: any) {
     console.error('Error creating review:', error);
     throw new Error('Failed to create user');
@@ -256,6 +256,19 @@ export const getProducts = async ({
     .limit(sort.limit);
   if (filter.search)
     productsQuery = productsQuery.where(sql`LOWER(name)`, sql`LIKE`, `%${filter.search}%`)
+  if (filter.category_id) {
+    productsQuery = productsQuery
+      .select([
+        `${DBTableNames.Products}.id`,
+        `${DBTableNames.Products}.name`,
+        `${DBTableNames.Products}.description`,
+        `${DBTableNames.Products}.price`,
+        `${DBTableNames.Products}.seller_id`,
+      ])
+      .fullJoin(DBTableNames.ProductCategories, `${DBTableNames.ProductCategories}.product_id`, `${DBTableNames.Products}.id`)
+      .fullJoin(DBTableNames.Categories, `${DBTableNames.ProductCategories}.category_id`, `${DBTableNames.Categories}.id`)
+      .where(`${DBTableNames.Categories}.id`, '=', filter.category_id as any);
+  }
   Object.entries(omit(filter, "search")).forEach(([key, value]) => {
     productsQuery = productsQuery.where(key as keyof DBProduct, '=', value as any);
   });
@@ -340,18 +353,18 @@ export const getRandomProducts = async (): Promise<Product[]> => {
     .selectFrom(DBTableNames.Products)
     .select('id')
     .execute();
-  
+
   // Extract product ids from result
   const productIds = productIdsResults.map(result => result.id);
-  
+
   // Randomize productIDs
   const shuffledProductIds = productIds.sort(() => 0.5 - Math.random());
   const randomProductIds = shuffledProductIds.slice(0, 3);
-  
+
   // Fetch each random product by id
   const randomProductsPromises = randomProductIds.map(id => getProduct(id));
   const randomProducts = await Promise.all(randomProductsPromises);
-  
+
   return randomProducts;
 }
 
@@ -378,7 +391,7 @@ export const getCategoriesWithPictures = async (): Promise<Category[]> => {
     return map;
   }, {} as Record<string, string>);
 
-  const categoriesWithPictures = categoriesResults.map(dbCategory => 
+  const categoriesWithPictures = categoriesResults.map(dbCategory =>
     mapDbCategoryToCategory(dbCategory, categoryPicturesMap[dbCategory.id] || null)
   );
 
