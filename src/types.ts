@@ -107,7 +107,7 @@ export type DataBase = {
   [DBTableNames.Reviews]: DBReview;
   [DBTableNames.Categories]: DBCategory;
   [DBTableNames.CategoryPictures]: DBCategoryPicture;
-  [DBTableNames.ProductCategories]: { product_id: string; category_id: string };
+  [DBTableNames.ProductCategories]: DBProductCategory;
 };
 
 export type Category = {
@@ -125,6 +125,11 @@ export type CategoryPicture = {
   categoryId: Category["id"];
   src: string;
 }
+
+export type DBProductCategory = {
+  product_id: Product["id"]
+  category_id: CategoryPicture["categoryId"];
+} & DBTimestamped;
 
 export type DBCategoryPicture = {
   category_id: CategoryPicture["categoryId"];
