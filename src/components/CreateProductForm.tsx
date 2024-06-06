@@ -6,7 +6,6 @@ import clsx from "clsx";
 import { createProduct } from "@/lib/actions";
 import { useSession } from "next-auth/react";
 import Axios from "axios";
-import Image from "next/image";
 import { Category} from "@/types";
 
 

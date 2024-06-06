@@ -6,10 +6,10 @@ import clsx from "clsx";
 import { editProduct } from "@/lib/actions";
 import Axios from "axios";
 import { DeleteProduct } from "./Buttons";
-import { Product } from "@/types";
+import { Product, Category } from "@/types";
 import Image from "next/image";
 
-export default function ProductForm( { product }: { product: Product } ) {
+export default function ProductForm( { product, categories, categoryIds }: { product: Product, categories: Category[], categoryIds: string[] } ) {
   const updateProductWithId = editProduct.bind(null, product.id);
 
   const [image, setImage] = useState<string[]>([]);
@@ -18,16 +18,18 @@ export default function ProductForm( { product }: { product: Product } ) {
   const [current, setCurrent] = useState(0);
   const [names, setNames] = useState<string[]>([]);
   const [error, setError] = useState("");
+  const [zodError, setZodError] = useState<{ [key: string]: string[] } | null>(null);
 
   // Initialize state with product images
-  // useEffect(() => {
-  //   if (product && product.images) {
-  //     const productImages = product.images.map(img => img.src);
-  //     setImage(productImages);
-  //     setSelecta(productImages.map((img, index) => `image${index + 1}`));
-  //     setCurrent(0);
-  //   }
-  // }, [product]);
+  useEffect(() => {
+    if (product && product.images) {
+      const productImages = product.images.map(img => img.src);
+      setImage(productImages);
+      console.log(productImages)
+      setSelecta(productImages.map((img, index) => `image${index + 1}`));
+      setCurrent(0);
+    }
+  }, [product]);
 
 
   const addSelecta = () => {
@@ -108,7 +110,20 @@ export default function ProductForm( { product }: { product: Product } ) {
 
     // Now that all images are uploaded, append URLs to formData
     formData.set("images", JSON.stringify(imagesUrls));
-    await updateProductWithId(formData); // Call the createProduct action
+    
+    const res = await updateProductWithId(formData); // Call the updateProductWithId action
+
+    // Update the error state:
+    if (typeof res?.message !== "undefined") {
+      setError(`${res?.message}`);
+    }
+    
+    // Update the productState based on the response
+    if (res?.errors) {
+      setZodError(res.errors);
+    } else {
+      setZodError(null);
+    }
     
   };
 
@@ -119,7 +134,7 @@ export default function ProductForm( { product }: { product: Product } ) {
       </div>
       <form onSubmit={handleSubmit} className="shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div>
-        <div className="mb-4">
+        <div>
             <input type="hidden" id="seller_id" name="seller_id" value={product.seller.id}/>
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -132,9 +147,18 @@ export default function ProductForm( { product }: { product: Product } ) {
               type="text"
               name="name"
               defaultValue={product.name}
+              aria-describedby="name-error"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-4" id="name-error" aria-live="polite" aria-atomic="true">
+              { zodError?.name &&
+                zodError?.name.map((error: string) => (
+                  <p className="mt-2 text-sm text-red-500" key={error}>
+                    {error}
+                  </p>
+                ))}
+            </div>
+          <div>
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="price"
@@ -147,9 +171,18 @@ export default function ProductForm( { product }: { product: Product } ) {
               name="price"
               placeholder="$100.0"
               defaultValue={product.price}
+              aria-describedby="price-error"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-4" id="price-error" aria-live="polite" aria-atomic="true">
+              { zodError?.price &&
+                zodError?.price.map((error: string) => (
+                  <p className="mt-2 text-sm text-red-500" key={error}>
+                    {error}
+                  </p>
+                ))}
+            </div>
+          <div>
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="description"
@@ -160,8 +193,49 @@ export default function ProductForm( { product }: { product: Product } ) {
               id="description"
               name="description"
               defaultValue={product.description}
+              aria-describedby="description-error"
             />
           </div>
+          <div className="mb-4" id="description-error" aria-live="polite" aria-atomic="true">
+              { zodError?.description &&
+                zodError?.description.map((error: string) => (
+                  <p className="mt-2 text-sm text-red-500" key={error}>
+                    {error}
+                  </p>
+                ))}
+            </div>
+            <div>
+              <p
+                className="block text-gray-700 text-sm font-bold mb-2"
+                >Product categories
+              </p>
+              {
+                categories.map((cat, index:number) => (
+                  <>
+                  <input className="shadow appearance-auto border forced-colors:appearance-auto rounded py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline has-error:border-rose-500"
+                    key={index+1}
+                    id={cat.name}
+                    type="checkbox"
+                    name="categories"
+                    value={cat.id}
+                    defaultChecked={categoryIds.includes(cat.id)}
+                    aria-describedby="category-error"/>
+                  <label key={index}
+                    htmlFor={cat.name}><span>&#8202;</span>
+                      {cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
+                  </label><br/>
+                  </>
+                ))
+              }
+            </div>
+            <div className="mb-4" id="categories-error" aria-live="polite" aria-atomic="true">
+              { zodError?.categories &&
+                zodError?.categories.map((error: string) => (
+                  <p className="mt-2 text-sm text-red-500" key={error}>
+                    {error}
+                  </p>
+                ))}
+            </div>
           <div className="mb-4">
             <p
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -206,7 +280,7 @@ export default function ProductForm( { product }: { product: Product } ) {
                                 style={{display:"none"}} 
                                 onChange={e => onChange(e)}
                                 />
-                                <label htmlFor="images" >
+                                <label htmlFor={`images-${index}`}>
                                   <BiImageAdd className="text-white font-bold size-8 cursor-pointer"/>
                                 </label>
                               </div>
@@ -227,7 +301,7 @@ export default function ProductForm( { product }: { product: Product } ) {
                     ))
                   }
                 </div>
-                <div className="bg-accent rounded focus:outline-none focus:shadow-outline">
+                <div className="bg-accent rounded focus:outline-none focus:shadow-outline" key="add-image">
                   <button type="button" 
                     className="rounded-md text-white p-2 flex cursor-pointer" 
                     onClick={addSelecta}>

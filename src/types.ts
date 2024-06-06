@@ -95,12 +95,14 @@ export enum DBTableNames {
   ProductImages = "group3_product_images",
   Reviews = "group3_reviews",
   Categories = "group3_categories",
+  ProductCategory = "group3_product_categories",
   CategoryPictures = "group3_category_pictures",
 };
 
 export type DataBase = {
   [DBTableNames.Users]: DBUser;
   [DBTableNames.Products]: DBProduct;
+  [DBTableNames.ProductCategory]: DBProductCategory;
   [DBTableNames.ProductImages]: DBProductImage;
   [DBTableNames.Reviews]: DBReview;
   [DBTableNames.Categories]: DBCategory;
@@ -122,6 +124,11 @@ export type CategoryPicture = {
   categoryId: Category["id"];
   src: string;
 }
+
+export type DBProductCategory = {
+  product_id: Product["id"]
+  category_id: CategoryPicture["categoryId"];
+} & DBTimestamped;
 
 export type DBCategoryPicture = {
   category_id: CategoryPicture["categoryId"];

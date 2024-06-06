@@ -136,11 +136,12 @@ export async function createProduct( formData: FormData ) {
 }
 
 export async function editProduct(id: string, formData: FormData) {
+
   const validatedFields = ProductData.safeParse({
-    seller_id: formData.get("seller_id"),
     name: formData.get("name"),
     price: formData.get("price"),
     description: formData.get("description"),
+    categories: formData.getAll("categories"),
     images: formData.get("images")
   });
 
@@ -152,7 +153,7 @@ export async function editProduct(id: string, formData: FormData) {
     };
   }
   // Prepare data for insertion into the database
-  const { name, price, description, images } = validatedFields.data;
+  const { name, price, description, categories, images } = validatedFields.data;
 
   try {
     // Update product in the DB:
@@ -161,19 +162,33 @@ export async function editProduct(id: string, formData: FormData) {
       SET name = ${name}, price = ${price}, description = ${description}
       WHERE id = ${id}
     `;
-    // Update images in the DB:
-    // images.forEach(async (url: string) => {
-    //   await sql`
-    //   DELETE group3_product_images
-    //   WHERE id = ${id};
 
-    //   INSERT INTO group3_product_images (src)
-    //   VALUES ${url}
-    //   WHERE id = ${id}
-    //   `;
-    // });
+    const imagesUrls = JSON.parse(images);
+
+    // Update images in the DB
+    await sql`
+      DELETE FROM group3_product_images
+      WHERE product_id = ${id}
+    `;
+
+    await Promise.all(imagesUrls.map((url: string) => sql`
+      INSERT INTO group3_product_images (src, product_id)
+      VALUES (${url}, ${id})
+    `));
+
+    // Update categories in the DB
+    await sql`
+      DELETE FROM group3_product_categories
+      WHERE product_id = ${id}
+    `;
+
+    await Promise.all(categories.map((categoryId: string) => sql`
+      INSERT INTO group3_product_categories (product_id, category_id)
+      VALUES (${id}, ${categoryId})
+    `));
 
   } catch (error) {
+    console.error("Database Error: ", error);
     return {
       message: "Database Error: Failed to Update Product.",
     };
@@ -189,15 +204,19 @@ export async function deleteProduct(id: string) {
     WHERE id = ${id}`;
 
   await sql`
-    DELETE FROM group3_product_images
-    WHERE id = ${id}`;
+  DELETE FROM group3_product_images
+  WHERE id = ${id}`;
+
+  await sql `
+  DELETE FROM group3_product_images
+  WHERE id = ${id}`;
+    
   } catch (error) {
+    console.error("Database Error: ", error);
     return {
       message: "Database Error: Failed to Delete Product.",
     };
   }
-  
-
   revalidatePath("/products");
   redirect(`/products`);
 }
