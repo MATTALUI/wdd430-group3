@@ -2,6 +2,8 @@ import RatingStars from "@/components/RatingStars";
 import { getProduct } from "@/lib/data";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import ReviewsForm from '@/components/ReviewsForm';
+import Image from "next/image";
+import { Metadata } from "next";
 import { EditProduct } from "@/components/EditProductButton";
 import Link from "next/link";
 
@@ -80,3 +82,7 @@ export default async function ProductPage({
     </div>
   );
 }
+
+export const metadata: Metadata = {
+  title: 'Product Details',
+};

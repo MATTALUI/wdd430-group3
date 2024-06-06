@@ -9,7 +9,10 @@ import { SessionProvider } from "next-auth/react";
 const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Handcrafted Haven",
+  title: {
+    template: '%s | Handcrafted Haven',
+    default: 'Handcrafted Haven',
+  },
   description: "A marketplace for artisans",
   openGraph: {
     title: "Handcrafted Haven",
