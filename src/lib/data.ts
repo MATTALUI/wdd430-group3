@@ -403,24 +403,6 @@ export const getCategoriesWithPictures = async (): Promise<Category[]> => {
 export const getCategoriesIdByProductId = async (productId: string): Promise<string[]> => {
   // Step 1: Get the category_ids from group3_product_categories by product_id
   const productCategoryResults = await db()
-    .selectFrom(DBTableNames.ProductCategory)
-    .select('category_id')
-    .where('product_id', '=', productId)
-    .execute();
-
-  if (productCategoryResults.length === 0) {
-    // If no categories are found for the given product_id, return an empty array
-    return [];
-  }
-
-  const categoryIds = productCategoryResults.map(result => result.category_id);
-
-  return categoryIds;
-};
-
-export const getCategoriesIdByProductId = async (productId: string): Promise<string[]> => {
-  // Step 1: Get the category_ids from group3_product_categories by product_id
-  const productCategoryResults = await db()
     .selectFrom(DBTableNames.ProductCategories)
     .select('category_id')
     .where('product_id', '=', productId)
