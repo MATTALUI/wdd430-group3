@@ -12,7 +12,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
         port: '',
-        pathname: '/dn72ezrxw/image/upload/v1717627095/handcrafted-haven/*',
+        pathname: '/**',
       }
     ],
   },
