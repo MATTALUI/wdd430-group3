@@ -264,6 +264,8 @@ export const getProducts = async ({
         `${DBTableNames.Products}.description`,
         `${DBTableNames.Products}.price`,
         `${DBTableNames.Products}.seller_id`,
+        `${DBTableNames.Products}.created_at`,
+        `${DBTableNames.Products}.updated_at`,
       ])
       .fullJoin(DBTableNames.ProductCategories, `${DBTableNames.ProductCategories}.product_id`, `${DBTableNames.Products}.id`)
       .fullJoin(DBTableNames.Categories, `${DBTableNames.ProductCategories}.category_id`, `${DBTableNames.Categories}.id`)

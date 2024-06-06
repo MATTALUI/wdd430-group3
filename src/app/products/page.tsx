@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import CategoryFilter from "@/components/CategoryFilter";
 import { Metadata } from "next";
 import CreateProduct from "@/components/CreateProductButton";
+import CategoriesFilterSkeleton from "@/components/CategoriesFilterSkeleton";
 
 const filterParams = [
   'seller_id',
@@ -39,7 +40,7 @@ export default async function ProductsPage({
     <div>
       <CreateProduct />
       <ProductsSearch />
-      <Suspense>
+      <Suspense fallback={<CategoriesFilterSkeleton/>}>
         <CategoryFilter />
       </Suspense>
       <div>
