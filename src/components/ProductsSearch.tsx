@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { useCallback, useState, Fragment, useMemo } from "react";
+import { useCallback, useState, Fragment, useMemo, Suspense } from "react";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { Listbox, Transition } from '@headlessui/react'
 import clsx from "clsx";

@@ -4,13 +4,15 @@ import ProductsSearch from "@/components/ProductsSearch";
 import { DBProduct, SortOrders } from "@/types";
 import { pick } from "lodash";
 import { Suspense } from "react";
-//import { CreateProduct } from "@/components/Buttons";
+import CategoryFilter from "@/components/CategoryFilter";
 import { Metadata } from "next";
 import CreateProduct from "@/components/CreateProductButton";
+import CategoriesFilterSkeleton from "@/components/CategoriesFilterSkeleton";
 
 const filterParams = [
   'seller_id',
-  'search'
+  'search',
+  'category_id',
 ];
 
 const sortParams = [
@@ -30,7 +32,7 @@ interface IProductsPageProps {
 
 export default async function ProductsPage({
   searchParams = {},
-}:IProductsPageProps) {
+}: IProductsPageProps) {
   const filter: Partial<DBProduct> = pick(searchParams, filterParams);
   const sort = pick(searchParams, sortParams);
 
@@ -38,6 +40,9 @@ export default async function ProductsPage({
     <div>
       <CreateProduct />
       <ProductsSearch />
+      <Suspense fallback={<CategoriesFilterSkeleton/>}>
+        <CategoryFilter />
+      </Suspense>
       <div>
         <Suspense fallback={<ProductListSkeletons />}>
           <ProductList filter={filter} sort={sort} />

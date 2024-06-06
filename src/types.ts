@@ -96,6 +96,7 @@ export enum DBTableNames {
   ProductImages = "group3_product_images",
   Reviews = "group3_reviews",
   Categories = "group3_categories",
+  ProductCategories = "group3_product_categories",
   CategoryPictures = "group3_category_pictures",
 };
 
@@ -106,6 +107,7 @@ export type DataBase = {
   [DBTableNames.Reviews]: DBReview;
   [DBTableNames.Categories]: DBCategory;
   [DBTableNames.CategoryPictures]: DBCategoryPicture;
+  [DBTableNames.ProductCategories]: { product_id: string; category_id: string };
 };
 
 export type Category = {
@@ -137,6 +139,7 @@ export enum SortOrders {
 export interface IQueryBuilder<T> {
   filter?: Partial<T & {
     search: string;
+    category_id: string;
   }>;
   sort?: Partial<{
     key: keyof T;
